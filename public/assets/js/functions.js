@@ -269,8 +269,8 @@ function buildTableAnalyze(days, site) {
         var hasData = Object.keys(gd).some(function(k) { return gd[k].length > 1; });
         if (!hasData) {
             $('#table-result-analyze').html(
-                '<p style="color:#888;padding:20px 0">Недостатньо даних. ' +
-                'Аналіз буде доступний після декількох днів роботи кронтаба.</p>'
+                '<p style="color:#888;padding:20px 0">Недостатньо даних для аналізу. ' +
+                'Спробуйте пізніше — потрібні записи за кілька різних днів.</p>'
             );
             return;
         }
