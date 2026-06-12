@@ -17,5 +17,9 @@ data/sync.log
 .DS_Store
 Thumbs.db
 
+# Generated assets (hero animation — commit manually when ready)
+assets/*.webp
+assets/*.gif
+
 # Local dev docs
 docs/superpowers/
