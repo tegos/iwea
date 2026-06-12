@@ -170,7 +170,7 @@ class Action extends Helper
             $view->title_prev = $this->getTitlePage($prev);
         }
 
-        $view->chart = $view->render('chart-all');
+        $view->chart = $view->render('chart-compare');
     }
 
     public function analytics(Template &$view): void

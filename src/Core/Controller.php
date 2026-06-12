@@ -87,13 +87,21 @@ class Controller extends Helper
 
         $renderPage = null;
 
+        $templateMap = [
+            'info'     => 'sources',
+            'all'      => 'compare',
+            'auth_reg' => 'login',
+            'reg'      => 'register',
+            'not_found'=> 'not-found',
+        ];
+
         switch ($action) {
             case 'home':
-                $renderPage = $action;
+                $renderPage = 'home';
                 $act->home($view);
                 break;
             case 'search':
-                $renderPage = $action;
+                $renderPage = 'search';
                 $act->search_page($view);
                 break;
             case 'info':
@@ -106,7 +114,7 @@ class Controller extends Helper
             case 'registration':
             case 'auth':
             case 'account':
-                $renderPage = $action;
+                $renderPage = $templateMap[$action] ?? $action;
                 $act->$action($view);
                 break;
             case 'sitemap':
@@ -121,7 +129,7 @@ class Controller extends Helper
                 header('Location: /');
                 exit;
             default:
-                $renderPage = 'not_found';
+                $renderPage = 'not-found';
                 $act->not_found($view);
                 break;
         }
