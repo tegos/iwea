@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div class="fullwidth-block no-padding light-block-analyze">
+<div class="fullwidth-block">
     <div class="container all-text-header">
         <h1 class="section-title">Точність прогнозу</h1>
         <h2 class="text-center">Порівняльний аналіз даних прогнозу погоди різних сайтів</h2>
