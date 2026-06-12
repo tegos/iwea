@@ -32,13 +32,15 @@ CREATE TABLE IF NOT EXISTS `city` (
 -- Referenced columns: id, name, status, color, image_url
 -- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS `site` (
-  `id`        INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  `name`      VARCHAR(255)    NOT NULL,
-  `status`    TINYINT(1)      NOT NULL DEFAULT 1,
-  `color`     VARCHAR(32)     NOT NULL DEFAULT '',
-  `image_url` VARCHAR(512)    NOT NULL DEFAULT '',
-  `url`       VARCHAR(512)    NOT NULL DEFAULT '',
-  `country`   VARCHAR(100)    NOT NULL DEFAULT '',
+  `id`          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  `name`        VARCHAR(255)    NOT NULL,
+  `status`      TINYINT(1)      NOT NULL DEFAULT 1,
+  `color`       VARCHAR(32)     NOT NULL DEFAULT '',
+  `image_url`   VARCHAR(512)    NOT NULL DEFAULT '',
+  `url`         VARCHAR(512)    NOT NULL DEFAULT '',
+  `country`     VARCHAR(100)    NOT NULL DEFAULT '',
+  `type`        VARCHAR(20)     NOT NULL DEFAULT '',
+  `description` VARCHAR(500)    NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `idx_site_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -96,14 +98,16 @@ ON DUPLICATE KEY UPDATE
   `cid_pl`       = VALUES(`cid_pl`);
 
 -- Weather sources (7 sources used in the codebase)
-INSERT INTO `site` (`id`, `name`, `status`, `color`, `image_url`, `url`, `country`) VALUES
-  (1, 'OpenWeatherMap',    1, 'rgb(240, 87,  46)',  '', 'https://openweathermap.org/',        'США'),
-  (2, 'AerisWeather',      0, 'rgb(46,  87,  240)', '', 'https://www.aerisweather.com/',      'США'),
-  (3, 'WorldWeatherOnline',0, 'rgb(240, 200, 46)',  '', 'https://www.worldweatheronline.com/','Велика Британія'),
-  (4, 'OpenMeteo',         1, 'rgb(46,  200, 100)', '', 'https://open-meteo.com/',            'Австрія'),
-  (5, 'SinoptikUa',        1, 'rgb(200, 46,  200)', '', 'https://ua.sinoptik.ua/',            'Україна'),
-  (6, 'Meteoprog',         1, 'rgb(46,  200, 200)', '', 'https://www.meteoprog.ua/',          'Україна'),
-  (7, 'Interia',           1, 'rgb(200, 100, 46)',  '', 'https://pogoda.interia.pl/',         'Польща')
+INSERT INTO `site` (`id`, `name`, `status`, `color`, `image_url`, `url`, `country`, `type`, `description`) VALUES
+  (1, 'OpenWeatherMap',    1, 'rgb(240, 87,  46)',  '', 'https://openweathermap.org/',        'США',            'API',     'Глобальний REST API. Прогноз за координатами (lat/lon), групування 3-годинних точок у денний мін/макс. Потрібен безкоштовний ключ.'),
+  (2, 'AerisWeather',      0, 'rgb(46,  87,  240)', '', 'https://www.aerisweather.com/',      'США',            'API',     'Комерційний API погоди. Вимкнено — безкоштовний рівень більше не доступний.'),
+  (3, 'WorldWeatherOnline',0, 'rgb(240, 200, 46)',  '', 'https://www.worldweatheronline.com/','Велика Британія','API',     'Британський API погоди. Вимкнено — тільки платний план.'),
+  (4, 'OpenMeteo',         1, 'rgb(46,  200, 100)', '', 'https://open-meteo.com/',            'Австрія',        'API',     'Безкоштовний open-source API. Ключ не потрібен. 7-денний прогноз мін/макс температур за координатами.'),
+  (5, 'SinoptikUa',        1, 'rgb(200, 46,  200)', '', 'https://ua.sinoptik.ua/',            'Україна',        'Scraper', 'Украïнський сервіс погоди. Парсинг JSON із вбудованого тегу <script id="preloaded-state"> на сторінці 10-денного прогнозу.'),
+  (6, 'Meteoprog',         1, 'rgb(46,  200, 200)', '', 'https://www.meteoprog.com/',         'Україна',        'Scraper', 'Украïнський/Европейський сервіс. Парсинг вбудованої JS-змінної `var data = [...]` зі сторінки огляду.'),
+  (7, 'Interia',           1, 'rgb(200, 100, 46)',  '', 'https://pogoda.interia.pl/',         'Польща',         'Scraper', 'Польський сервіс погоди. Парсинг DOM через Symfony DomCrawler, довгостроковий прогноз.')
 ON DUPLICATE KEY UPDATE
-  `url`     = VALUES(`url`),
-  `country` = VALUES(`country`);
+  `url`         = VALUES(`url`),
+  `country`     = VALUES(`country`),
+  `type`        = VALUES(`type`),
+  `description` = VALUES(`description`);

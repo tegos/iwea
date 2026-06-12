@@ -66,7 +66,7 @@ class Action extends Helper
     public function info(Template &$view): void
     {
         $view->title     = 'Список джерел';
-        $view->sites     = $this->model->getSites();
+        $view->sites     = $this->model->getAllSites();
         $view->canonical = (Config::get('APP_DOMAIN') ?? '') . '/sources';
     }
 
