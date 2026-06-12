@@ -3,27 +3,11 @@
 <main class="main-content">
     <div class="fullwidth-block">
         <div class="container">
-            <h2 class="section-title">Мій профіль</h2>
-
-            <div class="row">
-
-                <?php if($results)  { ?>
-                <ul class="arrow-list">
-                    <?php foreach ($results as $res) { ?>
-                    <li><a href="/set-city?city_id=<?php echo $res['id']; ?>"><?php echo $res['name']; ?></a>
-                    </li>
-                    <?php } ?>
-                </ul>
-                <?php }else { ?>
-                <h3>Немає результатів</h3>
-                <?php } ?>
-
-
-            </div>
+            <h1 class="section-title">Мій профіль</h1>
+            <p><strong>Ім'я:</strong> <?= htmlspecialchars($user['name']) ?></p>
+            <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
         </div>
     </div>
-
-
 </main>
 
 <?php echo $footer; ?>

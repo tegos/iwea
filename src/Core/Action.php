@@ -211,6 +211,16 @@ class Action extends Helper
         $view->chart_diff = $view->render('chart-diff');
     }
 
+    public function account(Template &$view): void
+    {
+        if (!$this->isUser()) {
+            header('Location: /login');
+            exit;
+        }
+        $view->title     = 'iWEA — Мій профіль';
+        $view->canonical = (Config::get('APP_DOMAIN') ?? '') . '/account';
+    }
+
     public function auth(Template &$view): void
     {
         $email = $_POST['email'] ?? '';

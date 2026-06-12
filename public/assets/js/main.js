@@ -3,8 +3,8 @@ $(function () {
     try {
         initChartMin();
         initChartMax();
-    }
-    catch (err) {
+    } catch (err) {
+        console.error('initChart:', err);
     }
 
     $("svg").each(function () {
@@ -24,6 +24,7 @@ $(function () {
     try {
         removeSeries();
     } catch (e) {
+        console.error('removeSeries:', e);
     }
 
     $('#source-list-sites input').change(function () {
