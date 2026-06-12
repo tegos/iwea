@@ -34,8 +34,9 @@
 </main>
 
 <script>
-    var cats         = <?= $categories ?>;
-    var series_groups = <?= $series_max ?>;
+    var cats          = <?= $categories ?>;
+    var series_max    = <?= $series_max ?>;
+    var series_groups = series_max;
     var group_1, group_2;
 
     function initChartGroups() {

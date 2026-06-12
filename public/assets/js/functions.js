@@ -266,9 +266,17 @@ function buildTableAnalyze(days, site) {
     div_progress_container.html('');
 
     $.getJSON('/api.php?method=getDataAnalyze&days=' + days, function (gd) {
-        //console.log(gd);
+        var hasData = Object.keys(gd).some(function(k) { return gd[k].length > 1; });
+        if (!hasData) {
+            $('#table-result-analyze').html(
+                '<p style="color:#888;padding:20px 0">Недостатньо даних. ' +
+                'Аналіз буде доступний після декількох днів роботи кронтаба.</p>'
+            );
+            return;
+        }
         for (var name in gd) {
             var data = gd[name];
+            if (data.length < 2) continue;
             var k = 0;
             var real = 0;
 
