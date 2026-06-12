@@ -10,7 +10,7 @@
                 <?php if($results)  { ?>
                 <ul class="arrow-list">
                     <?php foreach ($results as $res) { ?>
-                    <li><a href="/?action=set_city_id&city_id=<?php echo $res['id']; ?>"><?php echo $res['name']; ?></a>
+                    <li><a href="/set-city?city_id=<?php echo $res['id']; ?>"><?php echo $res['name']; ?></a>
                     </li>
                     <?php } ?>
                 </ul>

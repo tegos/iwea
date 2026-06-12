@@ -214,7 +214,7 @@ class Action extends Helper
             $this->model->setMessage('error', serialize(['status' => true, 'message' => 'Перевірте введені дані.']));
         }
 
-        header('Location: /?action=reg');
+        header('Location: /login');
         exit;
     }
 
@@ -228,7 +228,7 @@ class Action extends Helper
             if (!$this->model->userExists($email)) {
                 $this->model->addUser(['email' => $email, 'pass' => $pass, 'name' => $name]);
                 $this->model->setMessage('reg_success', true);
-                header('Location: /?action=auth_reg');
+                header('Location: /login');
                 exit;
             }
             $this->model->setMessage('error', serialize(['status' => true, 'message' => 'Такий користувач вже існує.']));
@@ -236,7 +236,7 @@ class Action extends Helper
             $this->model->setMessage('error', serialize(['status' => true, 'message' => 'Перевірте введені дані.']));
         }
 
-        header('Location: /?action=reg');
+        header('Location: /register');
         exit;
     }
 

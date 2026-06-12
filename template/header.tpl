@@ -77,10 +77,10 @@
                     <li class="menu-item<?= $a === 'all'       ? ' current-menu-item' : '' ?>"><a href="/all">Погода сьогодні</a></li>
                     <li class="menu-item<?= $a === 'analytics' ? ' current-menu-item' : '' ?>"><a href="/analytics">Аналітика</a></li>
                     <?php if (!$user): ?>
-                    <li class="menu-item<?= in_array($a, ['auth_reg','reg']) ? ' current-menu-item' : '' ?>"><a href="/?action=auth_reg">Увійти</a></li>
+                    <li class="menu-item<?= in_array($a, ['auth_reg','reg']) ? ' current-menu-item' : '' ?>"><a href="/login">Увійти</a></li>
                     <?php else: ?>
                     <li class="menu-item">
-                        <a href="/?action=account"><?= htmlspecialchars($user['name']) ?></a>
+                        <a href="/account"><?= htmlspecialchars($user['name']) ?></a>
                     </li>
                     <?php endif; ?>
                 </ul> <!-- .menu -->

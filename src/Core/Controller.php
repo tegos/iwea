@@ -16,11 +16,51 @@ class Controller extends Helper
 
         if (strlen($path) > 0) {
             $this->route();
-        } elseif (isset($_GET['action']) && !empty($_GET['action'])) {
-            $this->routePage($_GET['action']);
-        } else {
-            $this->routePage('home');
+            return;
         }
+
+        $route     = $this->parseRoute();
+        $this->arg = $route['arg'] ?? $this->arg;
+        $this->routePage($route['action']);
+    }
+
+    private function parseRoute(): array
+    {
+        $uri = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $uri = trim($uri, '/');
+
+        if ($uri === '' || $uri === 'index.php') {
+            return ['action' => 'home', 'arg' => null];
+        }
+
+        if ($uri === 'sitemap.xml') {
+            return ['action' => 'sitemap', 'arg' => null];
+        }
+
+        if (str_starts_with($uri, 'all/')) {
+            return ['action' => 'all', 'arg' => substr($uri, 4)];
+        }
+
+        if ($uri === 'login') {
+            return [
+                'action' => $_SERVER['REQUEST_METHOD'] === 'POST' ? 'auth' : 'auth_reg',
+                'arg'    => null,
+            ];
+        }
+
+        if ($uri === 'register') {
+            return [
+                'action' => $_SERVER['REQUEST_METHOD'] === 'POST' ? 'registration' : 'reg',
+                'arg'    => null,
+            ];
+        }
+
+        $slugMap = [
+            'set-city' => 'set_city_id',
+            'set-site' => 'set_site_id',
+        ];
+
+        return ['action' => $slugMap[$uri] ?? $uri, 'arg' => null];
     }
 
     private function route(): void
@@ -60,6 +100,7 @@ class Controller extends Helper
             case 'reg':
             case 'registration':
             case 'auth':
+            case 'account':
                 $renderPage = $action;
                 $act->$action($view);
                 break;

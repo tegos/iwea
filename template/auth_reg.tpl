@@ -26,7 +26,7 @@
                 <h2 class="section-title">Авторизація</h2>
                 <p>Для продовження введіть Ваш e-mail та пароль, вказані при реєстрації.
                     Якщо Ви ще не реєструвались, натисніть "Зареєструватись".</p>
-                <form action="/?action=auth" method="post" class="contact-form">
+                <form action="/login" method="post" class="contact-form">
                     <div class="row">
                         <div class="col-md-8">
                             <input name="email" type="email" placeholder="Ваш e-mail..."></div>
@@ -41,7 +41,7 @@
                             <input type="submit" value="Далі">
                         </div>
                         <div class="col-md-4 text-right">
-                            <a class="button-reg" href="/?action=reg">Зареєструватись</a>
+                            <a class="button-reg" href="/register">Зареєструватись</a>
                         </div>
                     </div>
                 </form>
