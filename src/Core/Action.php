@@ -38,7 +38,7 @@ class Action extends Helper
         $view->categories  = json_encode($weather['categories']);
         $view->series      = json_encode($weather['series']);
         $view->city_name   = $weather['city_name'];
-        $view->title       = 'iWEA - Веб-застосування для порівняння прогнозу погоди';
+        $view->title       = 'iWEA — Порівняння прогнозу погоди';
         $view->day_now     = $this->getDayUkr((int)$dateNow->format('w'));
         $view->forecasts   = $weather['forecasts'];
         $view->now_month   = $this->getMonthUkr($dateNow->format('M'));

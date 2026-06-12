@@ -65,8 +65,7 @@
                     <h2 class="site-title">iWEA</h2>
                     <?php } ?>
 
-                    <h2 class="site-description">Веб-застосування для порівняння прогнозу погоди за різними сайтами
-                    </h2>
+                    <h2 class="site-description">Порівняння прогнозу погоди з різних джерел</h2>
                 </div>
             </a>
 
