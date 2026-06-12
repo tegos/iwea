@@ -54,9 +54,9 @@ class Interia implements ISiteHelper
                 return;
             }
 
-            $list->filter('li')->each(function (Crawler $li): void {
-                $dateNode = $li->filter('.date');
-                $dayNode  = $li->filter('.day');
+            $list->filter('.weather-forecast-longterm-list-entry')->each(function (Crawler $li): void {
+                $dateNode = $li->filter('.weather-forecast-longterm-list-entry-hour .date');
+                $dayNode  = $li->filter('.weather-forecast-longterm-list-entry-hour .day');
 
                 if ($dateNode->count() === 0 || $dayNode->count() === 0) {
                     return;

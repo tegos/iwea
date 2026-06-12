@@ -3,7 +3,6 @@
 namespace Iwea\Weather;
 
 use GuzzleHttp\Client;
-use Symfony\Component\DomCrawler\Crawler;
 use Iwea\Core\Model;
 
 class SinoptikUa implements ISiteHelper
@@ -45,56 +44,39 @@ class SinoptikUa implements ISiteHelper
         try {
             $html = $this->client->get($this->url)->getBody()->getContents();
 
-            $crawler = new Crawler($html);
-
-            $blockDays = $crawler->filter('#blockDays');
-            if ($blockDays->count() === 0) {
-                error_log('SinoptikUa: #blockDays not found');
+            if (!preg_match('/<script[^>]*id="preloaded-state"[^>]*>(.*?)<\/script>/s', $html, $m)) {
+                error_log('SinoptikUa: preloaded-state script block not found');
                 return;
             }
 
-            $dayNodes = $blockDays->filter('.tabs .main');
-            if ($dayNodes->count() === 0) {
-                error_log('SinoptikUa: no .tabs .main day nodes found');
+            $data = json_decode($m[1], true);
+            if (!isset($data['weather']['data']['forecast']) || !is_array($data['weather']['data']['forecast'])) {
+                error_log('SinoptikUa: forecast data not found in preloaded-state JSON');
                 return;
             }
 
-            $beginDate = new \DateTime();
-            $i = 0;
+            $forecast = $data['weather']['data']['forecast'];
+            $count    = 0;
 
-            $dayNodes->each(function (Crawler $day) use (&$beginDate, &$i): void {
-                if ($i > $this->days) {
-                    return;
+            foreach ($forecast as $day) {
+                if ($count >= 7) {
+                    break;
                 }
 
-                $maxNode = $day->filter('.max span');
-                $minNode = $day->filter('.min span');
-
-                if ($maxNode->count() === 0 || $minNode->count() === 0) {
-                    $i++;
-                    return;
+                if (!isset($day['date'], $day['temperature']['max'], $day['temperature']['min'])) {
+                    continue;
                 }
-
-                if ($i === 0) {
-                    $dd = clone $beginDate;
-                } else {
-                    $beginDate->modify('+1 day');
-                    $dd = clone $beginDate;
-                }
-
-                $max = trim($maxNode->text());
-                $min = trim($minNode->text());
 
                 $this->model->addWeatherRecord([
                     'site_id'  => $this->siteId,
                     'city_id'  => $this->cityId,
-                    'date'     => $dd->format('Y-m-d'),
-                    'min_temp' => (int) trim($min, '°C'),
-                    'max_temp' => (int) trim($max, '°C'),
+                    'date'     => $day['date'],
+                    'min_temp' => (int) $day['temperature']['min'],
+                    'max_temp' => (int) $day['temperature']['max'],
                 ]);
 
-                $i++;
-            });
+                $count++;
+            }
         } catch (\Throwable $e) {
             error_log('SinoptikUa: ' . $e->getMessage());
         }

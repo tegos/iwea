@@ -45,64 +45,44 @@ class Meteoprog implements ISiteHelper
         try {
             $content = $this->client->get($this->url)->getBody()->getContents();
 
-            // The page embeds temperature arrays as JS variables `var hot` and `var cold`.
+            // The page embeds forecast as a JS variable `var data = [...]`.
             // Regex extraction is intentional — DomCrawler cannot parse JS variables.
-
-            // Isolate the script block that contains these variables
-            $dataTemperature = $content;
-
-            // Strip the jQuery wrapper if present
-            $dataTemperature = str_replace('$(function() {', '', $dataTemperature);
-
-            // Cut off everything from `var options` onwards
-            $optionsPos = strpos($dataTemperature, 'var options');
-            if ($optionsPos !== false) {
-                $dataTemperature = substr($dataTemperature, 0, $optionsPos);
-            }
-
-            preg_match('/var hot =(.*)\svar cold/s', $dataTemperature, $hots);
-            if (empty($hots[1])) {
-                error_log('Meteoprog: could not extract var hot');
-                return;
-            }
-            $hot = trim(rtrim(trim($hots[1]), ';'));
-
-            preg_match('/var cold =(.*);/s', $dataTemperature, $colds);
-            if (empty($colds[1])) {
-                error_log('Meteoprog: could not extract var cold');
-                return;
-            }
-            $cold = trim(rtrim(trim($colds[1]), ';'));
-
-            $hotArray  = json_decode($hot, true);
-            $coldArray = json_decode($cold, true);
-
-            if (!is_array($hotArray) || !is_array($coldArray)) {
-                error_log('Meteoprog: failed to JSON-decode temperature arrays');
+            if (!preg_match('/var data\s*=\s*(\[.*?\]);/s', $content, $m)) {
+                error_log('Meteoprog: could not extract var data');
                 return;
             }
 
-            $beginDate = new \DateTime();
+            $entries = json_decode($m[1], true);
+            if (!is_array($entries)) {
+                error_log('Meteoprog: failed to JSON-decode var data');
+                return;
+            }
 
-            for ($i = 0; $i < $this->days; $i++) {
-                if (!isset($hotArray[$i], $coldArray[$i])) {
+            $count = 0;
+
+            foreach ($entries as $entry) {
+                if ($count >= 7) {
                     break;
                 }
 
-                if ($i === 0) {
-                    $dd = clone $beginDate;
-                } else {
-                    $beginDate->modify('+1 day');
-                    $dd = clone $beginDate;
+                // Skip hidden/past entries
+                if (isset($entry['hide'])) {
+                    continue;
+                }
+
+                if (!isset($entry['date'], $entry['max'], $entry['min'])) {
+                    continue;
                 }
 
                 $this->model->addWeatherRecord([
                     'site_id'  => $this->siteId,
                     'city_id'  => $this->cityId,
-                    'date'     => $dd->format('Y-m-d'),
-                    'min_temp' => $coldArray[$i][1],
-                    'max_temp' => $hotArray[$i][1],
+                    'date'     => $entry['date'],
+                    'min_temp' => (int) $entry['min'],
+                    'max_temp' => (int) $entry['max'],
                 ]);
+
+                $count++;
             }
         } catch (\Throwable $e) {
             error_log('Meteoprog: ' . $e->getMessage());
