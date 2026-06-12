@@ -16,7 +16,7 @@
     var cats = <?php echo $categories;    ?>;
     var series = <?=$series?>;
     function initChartMin() {
-        $('#container-chart-min').highcharts({
+        Highcharts.chart('container-chart-min', {
                     chart: {
                         type: 'spline'
                     },
@@ -54,8 +54,7 @@
                         }
                     },
                     series: series
-                }
-        );
+                });
     }
 </script>
 
@@ -63,7 +62,7 @@
 
     var series_max = <?=$series_max?>;
     function initChartMax() {
-        $('#container-chart-max').highcharts({
+        Highcharts.chart('container-chart-max', {
                     chart: {
                         type: 'spline'
                     },
@@ -101,7 +100,6 @@
                         }
                     },
                     series: series_max
-                }
-        );
+                });
     }
 </script>

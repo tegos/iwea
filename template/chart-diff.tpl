@@ -11,8 +11,9 @@
 <script>
     var cats = <?php echo $categories;    ?>;
     var series = <?=$series?>;
+    var chartDiff;
     function initChartMin() {
-        $('#container-chart-diff').highcharts({
+        chartDiff = Highcharts.chart('container-chart-diff', {
                     chart: {
                         type: 'spline'
                     },
@@ -50,20 +51,14 @@
                         }
                     },
                     series: series
-                }
-        );
+                });
     }
-
-
-
 </script>
 
-
 <script>
-
     var series_max = <?=$series_max?>;
     function initChartMax() {
-        $('#container-chart-max').highcharts({
+        Highcharts.chart('container-chart-max', {
                     chart: {
                         type: 'line'
                     },
@@ -101,12 +96,11 @@
                         }
                     },
                     series: series_max
-                }
-        );
+                });
     }
 
     function removeSeries () {
-        var chart = $('#container-chart-diff').highcharts();
+        var chart = chartDiff;
         var seriesLength = chart.series.length;
         for (var i = seriesLength - 1; i > -1; i--) {
             chart.series[i].remove();

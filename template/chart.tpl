@@ -10,7 +10,7 @@
     var cats = <?php echo $categories;    ?>;
     var series = <?=$series?>;
     function initChartMin() {
-        $('#container-chart-min').highcharts({
+        Highcharts.chart('container-chart-min', {
                     chart: {
                         type: 'spline'
                     },
@@ -48,7 +48,6 @@
                         }
                     },
                     series: series
-                }
-        );
+                });
     }
 </script>

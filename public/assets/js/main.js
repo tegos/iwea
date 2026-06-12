@@ -30,7 +30,7 @@ $(function () {
     $('#source-list-sites input').change(function () {
         var ul = $('#source-list-sites');
 
-        var chart = $('#container-chart-diff').highcharts();
+        var chart = chartDiff;
 
         removeSeries();
         var ids = [];
