@@ -146,7 +146,7 @@ class Model extends Helper
         $startDatePlus = (new \DateTime())->modify('+1 day');
         $endDate       = (new \DateTime())->modify("-{$days} day");
 
-        $sql = "SELECT site_id, site.name, city_id, date, DATE(date_write) AS datew,
+        $sql = "SELECT site_id, site.name AS name, city_id, date, DATE(date_write) AS datew,
                     AVG(min_temp) AS min, AVG(max_temp) AS max
                 FROM weather
                 JOIN site ON weather.site_id = site.id
@@ -154,8 +154,8 @@ class Model extends Helper
                 AND DATE(date) = ?
                 AND date_write BETWEEN ? AND ?
                 AND status = 1
-                GROUP BY DATE(date_write), site_id
-                ORDER BY site_id, date_write";
+                GROUP BY DATE(date_write), site_id, site.name, city_id, date
+                ORDER BY site_id, DATE(date_write)";
 
         $data = $this->query($sql, [
             $cityId,
@@ -219,7 +219,7 @@ class Model extends Helper
                 'site_id' => $value['site_id'],
             ];
         }
-        $categories = array_unique($categories);
+        $categories = array_values(array_unique($categories));
 
         $forecasts = [];
         foreach ($categories as $category) {
@@ -300,7 +300,7 @@ class Model extends Helper
             $d = \DateTime::createFromFormat('Y-m-d', $value['date']);
             $categories[] = $d->format('d.m.Y');
         }
-        $categories = array_unique($categories);
+        $categories = array_values(array_unique($categories));
 
         $series = [];
         foreach ($sites as $site) {

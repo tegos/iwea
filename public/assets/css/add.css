@@ -274,8 +274,14 @@ body {
     transform: scale(0);
 }
 
-#source-list-sites label img {
-    width: 100px;
+#source-list-sites label .src-dot {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 6px;
+    flex-shrink: 0;
     transition-duration: 0.2s;
     transform-origin: 50% 50%;
 }
@@ -291,10 +297,9 @@ body {
     transform: scale(1);
 }
 
-#source-list-sites :checked + label img {
+#source-list-sites :checked + label .src-dot {
     transform: scale(0.9);
     box-shadow: 0 0 5px #333;
-    z-index: -1;
 }
 
 #source-list-sites-for-matrix {

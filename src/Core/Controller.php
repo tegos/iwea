@@ -83,6 +83,7 @@ class Controller extends Helper
         $view = new Template();
         $act  = new Action($this->model, $this->arg);
         $act->header($view);
+        $view->current_action = $action;
 
         $renderPage = null;
 
@@ -98,6 +99,8 @@ class Controller extends Helper
             case 'info':
             case 'all':
             case 'analytics':
+            case 'accuracy':
+            case 'diff':
             case 'auth_reg':
             case 'reg':
             case 'registration':

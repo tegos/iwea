@@ -75,7 +75,9 @@
                     <li class="menu-item<?= $a === 'home'      ? ' current-menu-item' : '' ?>"><a href="/">Головна</a></li>
                     <li class="menu-item<?= $a === 'info'      ? ' current-menu-item' : '' ?>"><a href="/sources">Список джерел</a></li>
                     <li class="menu-item<?= $a === 'all'       ? ' current-menu-item' : '' ?>"><a href="/compare">Погода сьогодні</a></li>
-                    <li class="menu-item<?= $a === 'analytics' ? ' current-menu-item' : '' ?>"><a href="/analytics">Аналітика</a></li>
+                    <li class="menu-item<?= $a === 'analytics' ? ' current-menu-item' : '' ?>"><a href="/analytics">Класифікація</a></li>
+                    <li class="menu-item<?= $a === 'accuracy'  ? ' current-menu-item' : '' ?>"><a href="/accuracy">Точність</a></li>
+                    <li class="menu-item<?= $a === 'diff'      ? ' current-menu-item' : '' ?>"><a href="/diff">Різниця</a></li>
                     <?php if (!$user): ?>
                     <li class="menu-item<?= in_array($a, ['auth_reg','reg']) ? ' current-menu-item' : '' ?>"><a href="/login">Увійти</a></li>
                     <?php else: ?>

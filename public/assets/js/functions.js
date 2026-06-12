@@ -53,7 +53,7 @@ function setActiveMenuItem() {
 function buildTableTemterature() {
     var table = $('<table border="1"  class="source-table"/>');
 
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < series.length; i++) {
         var tr = $('<tr/>');
         var data = series[i]['data'];
         for (var j = 0; j < data.length; j++) {
@@ -70,9 +70,10 @@ function buildTableDistance() {
     var table = $('<table border="1"  class="source-table dist-table"/>');
 
 
-    for (var i = 0; i < 7; i++) {
+    var n = series_max.length;
+    for (var i = 0; i < n; i++) {
         var tr = $('<tr class="dist-tr"/>');
-        for (var j = 0; j < 7; j++) {
+        for (var j = 0; j < n; j++) {
             var dist = findDistance(i, j);
 
             var td = $('<td/>').text(dist);
@@ -84,7 +85,7 @@ function buildTableDistance() {
         tr.appendTo(table);
     }
 
-    var width_td = 350 / 7;
+    var width_td = 350 / n;
 
 
     $('#table-result-distance').html(table);
@@ -101,15 +102,13 @@ function buildTableDistance() {
 }
 
 function findDistance(i, j) {
-    var n = 7;
-    var data = series_max[i]['data'];
-    var sum = +0;
+    var n = Math.min(series_max[i]['data'].length, series_max[j]['data'].length);
+    if (n === 0) return '0.000';
+    var sum = 0;
     for (var k = 0; k < n; k++) {
         var diff = series_max[i]['data'][k] - series_max[j]['data'][k];
-        var sqr = Math.pow(diff, 2);
-        sum += sqr;
+        sum += Math.pow(diff, 2);
     }
-    //return Math.sqrt(sum).toFixed(3);
     return (sum / n).toFixed(3);
 }
 
@@ -196,23 +195,21 @@ function buildTableKoef() {
 }
 
 function getGroup() {
-    var matrix = Create2DArray(7, 7);
-    for (var i = 0; i < 7; i++) {
-        for (var j = 0; j < 7; j++) {
-            var dist = parseFloat(findDistance(i, j));
-            matrix[i][j] = (dist);
+    var n = series_max.length;
+    var matrix = Create2DArray(n, n);
+    for (var i = 0; i < n; i++) {
+        for (var j = 0; j < n; j++) {
+            matrix[i][j] = parseFloat(findDistance(i, j));
         }
     }
 
-    var n = 7;
-
-    var next = Create2DArray(7, 7);
+    var next = Create2DArray(n, n);
     for (var i = 0; i < n; ++i)
         for (var u = 0; u < n; ++u)
             for (var v = 0; v < n; ++v) {
                 if (matrix[u][i] + matrix[i][v] < matrix[u][v]) {
-                    matrix[u][v] = matrix[u][i] + matrix[i][v]
-                    next[u][v] = i
+                    matrix[u][v] = matrix[u][i] + matrix[i][v];
+                    next[u][v] = i;
                 }
             }
 
@@ -220,91 +217,47 @@ function getGroup() {
     var groupTwo = [];
 
     groupOne.push(0);
-    while (groupOne.length < 4) {
+    while (groupOne.length < Math.ceil(n / 2)) {
         var last_path = groupOne.last();
-        var arr = matrix[last_path];
-        var m = minimum(arr, groupOne);
-        var ind = matrix[last_path].indexOf(m);
-        groupOne.push(ind);
+        var m = minimum(matrix[last_path], groupOne);
+        groupOne.push(matrix[last_path].indexOf(m));
     }
 
-    // i = count sites (may changes)
-    for (var i = 0; i < 10; i++) {
-        if (groupOne.indexOf(i) == -1) {
-            groupTwo.push(i + 1);
+    for (var i = 0; i < n; i++) {
+        if (groupOne.indexOf(i) === -1) {
+            groupTwo.push(i);
         }
     }
 
-    groupOne.forEach(function (it, i) {
-        groupOne[i] = it + 1;
-    });
+    // Resolve group names directly from series_groups (no API call needed)
+    var gr_1 = groupOne.map(function(idx) { return series_groups[idx].name; });
+    var gr_2 = groupTwo.map(function(idx) { return series_groups[idx].name; });
 
-
-    var table = $('<table border="1"  class="source-table group-class"/>');
-    var tr = $('<tr/>');
+    var table = $('<table border="1" class="source-table group-class"/>');
+    var tr  = $('<tr/>');
     var tr1 = $('<tr/>');
     $('<td>Група 1</td><td>Група 2</td>').appendTo(tr);
     tr.appendTo(table);
 
-    $.getJSON('/api.php?method=getSites', function (json) {
+    $('<td/>').html(gr_1.join(', ')).appendTo(tr1);
+    $('<td/>').html(gr_2.join(', ')).appendTo(tr1);
+    tr1.appendTo(table);
+    $('#table-result-group').html(table);
 
-        var gr_1 = [], gr_2 = [];
-        groupOne.forEach(function (itt) {
-            json.forEach(function (it) {
-                if (itt == it.id) {
-                    gr_1.push(it.name);
-                }
-            });
-        });
+    group_1 = [];
+    group_2 = [];
 
-        groupTwo.forEach(function (itt) {
-            json.forEach(function (it) {
-                if (itt == it.id) {
-                    gr_2.push(it.name);
-                }
-            });
-        });
-
-        var td_1 = $('<td/>');
-        var td_2 = $('<td/>');
-
-        td_1.html(gr_1.join(', '));
-        td_2.html(gr_2.join(', '));
-
-        td_1.appendTo(tr1);
-        td_2.appendTo(tr1);
-        tr1.appendTo(table);
-
-        $('#table-result-group').html(table);
-
-        group_1 = [];
-        group_2 = [];
-
-        series_groups.forEach(function (it) {
-            gr_1.forEach(function (itt) {
-                if (it.name == itt) {
-                    group_1.push(it);
-                }
-            });
-
-            gr_2.forEach(function (itt) {
-                if (it.name == itt) {
-                    group_2.push(it);
-                }
-            });
-        });
-
-        initChartGroups();
-
-        $("#groups-chart svg").each(function () {
-            $(this).find("text").last().remove();
-            $(this).find("desc").remove();
-        });
-
+    series_groups.forEach(function(it) {
+        if (gr_1.indexOf(it.name) !== -1) group_1.push(it);
+        if (gr_2.indexOf(it.name) !== -1) group_2.push(it);
     });
 
+    initChartGroups();
 
-    //console.log(groupOne);
+    $('#groups-chart svg').each(function() {
+        $(this).find('text').last().remove();
+        $(this).find('desc').remove();
+    });
 }
 
 function buildTableAnalyze(days, site) {
@@ -313,9 +266,17 @@ function buildTableAnalyze(days, site) {
     div_progress_container.html('');
 
     $.getJSON('/api.php?method=getDataAnalyze&days=' + days, function (gd) {
-        //console.log(gd);
+        var hasData = Object.keys(gd).some(function(k) { return gd[k].length > 1; });
+        if (!hasData) {
+            $('#table-result-analyze').html(
+                '<p style="color:#888;padding:20px 0">Недостатньо даних для аналізу. ' +
+                'Спробуйте пізніше — потрібні записи за кілька різних днів.</p>'
+            );
+            return;
+        }
         for (var name in gd) {
             var data = gd[name];
+            if (data.length < 2) continue;
             var k = 0;
             var real = 0;
 
