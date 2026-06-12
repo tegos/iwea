@@ -40,7 +40,7 @@
     var group_1, group_2;
 
     function initChartGroups() {
-        $('#container-chart-group-1').highcharts({
+        Highcharts.chart('container-chart-group-1', {
             chart: { type: 'spline' },
             title: { text: '<?= $city_name ?>, t° max, Група 1' },
             xAxis: { categories: cats },
@@ -53,7 +53,7 @@
             series: group_1
         });
 
-        $('#container-chart-group-2').highcharts({
+        Highcharts.chart('container-chart-group-2', {
             chart: { type: 'spline' },
             title: { text: '<?= $city_name ?>, t° max, Група 2' },
             xAxis: { categories: cats },
