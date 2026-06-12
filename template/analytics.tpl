@@ -76,12 +76,12 @@
         <div class="container">
             <ul id="source-list-sites">
                 <?php $ki = 0; foreach ($sites as $site) { ?>
-                <li><input value="<?php echo $ki; ?>"
-                           type="checkbox" id="cb<?php echo $ki; ?>"/>
-                    <label for="cb<?php echo $ki; ?>">
-                        <img title="<?php echo $site['name']; ?>"
-                             alt="<?php echo $site['name']; ?>"
-                             src="<?php echo $site['image_url']; ?>"/></label>
+                <li>
+                    <input value="<?= $ki ?>" type="checkbox" id="cb<?= $ki ?>"/>
+                    <label for="cb<?= $ki ?>">
+                        <span class="src-dot" style="background:<?= htmlspecialchars($site['color']) ?>"></span>
+                        <?= htmlspecialchars($site['name']) ?>
+                    </label>
                 </li>
                 <?php $ki++; } ?>
             </ul>

@@ -53,7 +53,7 @@ function setActiveMenuItem() {
 function buildTableTemterature() {
     var table = $('<table border="1"  class="source-table"/>');
 
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < series.length; i++) {
         var tr = $('<tr/>');
         var data = series[i]['data'];
         for (var j = 0; j < data.length; j++) {
@@ -70,9 +70,10 @@ function buildTableDistance() {
     var table = $('<table border="1"  class="source-table dist-table"/>');
 
 
-    for (var i = 0; i < 7; i++) {
+    var n = series_max.length;
+    for (var i = 0; i < n; i++) {
         var tr = $('<tr class="dist-tr"/>');
-        for (var j = 0; j < 7; j++) {
+        for (var j = 0; j < n; j++) {
             var dist = findDistance(i, j);
 
             var td = $('<td/>').text(dist);
@@ -84,7 +85,7 @@ function buildTableDistance() {
         tr.appendTo(table);
     }
 
-    var width_td = 350 / 7;
+    var width_td = 350 / n;
 
 
     $('#table-result-distance').html(table);
@@ -101,7 +102,7 @@ function buildTableDistance() {
 }
 
 function findDistance(i, j) {
-    var n = 7;
+    var n = series_max[i]['data'].length;
     var data = series_max[i]['data'];
     var sum = +0;
     for (var k = 0; k < n; k++) {
@@ -196,17 +197,16 @@ function buildTableKoef() {
 }
 
 function getGroup() {
-    var matrix = Create2DArray(7, 7);
-    for (var i = 0; i < 7; i++) {
-        for (var j = 0; j < 7; j++) {
+    var n = series_max.length;
+    var matrix = Create2DArray(n, n);
+    for (var i = 0; i < n; i++) {
+        for (var j = 0; j < n; j++) {
             var dist = parseFloat(findDistance(i, j));
             matrix[i][j] = (dist);
         }
     }
 
-    var n = 7;
-
-    var next = Create2DArray(7, 7);
+    var next = Create2DArray(n, n);
     for (var i = 0; i < n; ++i)
         for (var u = 0; u < n; ++u)
             for (var v = 0; v < n; ++v) {
@@ -220,7 +220,7 @@ function getGroup() {
     var groupTwo = [];
 
     groupOne.push(0);
-    while (groupOne.length < 4) {
+    while (groupOne.length < Math.ceil(n / 2)) {
         var last_path = groupOne.last();
         var arr = matrix[last_path];
         var m = minimum(arr, groupOne);
@@ -228,8 +228,7 @@ function getGroup() {
         groupOne.push(ind);
     }
 
-    // i = count sites (may changes)
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < n; i++) {
         if (groupOne.indexOf(i) == -1) {
             groupTwo.push(i + 1);
         }
