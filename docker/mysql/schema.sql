@@ -86,9 +86,9 @@ CREATE TABLE IF NOT EXISTS `user` (
 INSERT INTO `city` (`id`, `name`, `name_iso`, `name_tr`, `name_sinoptik`, `name_pl`, `cid_pl`, `lat`, `lon`) VALUES
   (1, 'Київ',   'Kyiv',    'Kyiv',    'київ',    'kijow',           60664, 50.4501, 30.5234),
   (2, 'Львів',  'Lviv',    'Lviv',    'львів',   'lwow',            60701, 49.8397, 24.0297),
-  (3, 'Одеса',  'Odesa',   'Odessa',  'одеса',   'odessa',          63090, 46.4825, 30.7233),
+  (3, 'Одеса',  'Odesa',   'Odesa',  'одеса',   'odessa',          63090, 46.4825, 30.7233),
   (4, 'Харків', 'Kharkiv', 'Kharkiv', 'харків',  'charkow',         55837, 49.9935, 36.2304),
-  (5, 'Дніпро', 'Dnipro',  'Dnepropetrovsk', 'дніпро', 'dniepropietrowsk', 51882, 48.4647, 35.0462)
+  (5, 'Дніпро', 'Dnipro',  'Dnipropetrovsk', 'дніпро', 'dniepropietrowsk', 51882, 48.4647, 35.0462)
 ON DUPLICATE KEY UPDATE
   `name_tr`      = VALUES(`name_tr`),
   `name_sinoptik`= VALUES(`name_sinoptik`),
@@ -98,8 +98,8 @@ ON DUPLICATE KEY UPDATE
 -- Weather sources (7 sources used in the codebase)
 INSERT INTO `site` (`id`, `name`, `status`, `color`, `image_url`, `url`, `country`) VALUES
   (1, 'OpenWeatherMap',    1, 'rgb(240, 87,  46)',  '', 'https://openweathermap.org/',        'США'),
-  (2, 'AerisWeather',      1, 'rgb(46,  87,  240)', '', 'https://www.aerisweather.com/',      'США'),
-  (3, 'WorldWeatherOnline',1, 'rgb(240, 200, 46)',  '', 'https://www.worldweatheronline.com/','Велика Британія'),
+  (2, 'AerisWeather',      0, 'rgb(46,  87,  240)', '', 'https://www.aerisweather.com/',      'США'),
+  (3, 'WorldWeatherOnline',0, 'rgb(240, 200, 46)',  '', 'https://www.worldweatheronline.com/','Велика Британія'),
   (4, 'OpenMeteo',         1, 'rgb(46,  200, 100)', '', 'https://open-meteo.com/',            'Австрія'),
   (5, 'SinoptikUa',        1, 'rgb(200, 46,  200)', '', 'https://ua.sinoptik.ua/',            'Україна'),
   (6, 'Meteoprog',         1, 'rgb(46,  200, 200)', '', 'https://www.meteoprog.ua/',          'Україна'),
