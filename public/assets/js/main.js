@@ -12,20 +12,6 @@ $(function () {
         $(this).find("desc").remove();
     });
 
-    var options = {
-        url: '/api.php?method=getSCities',
-        list: {
-            match: {
-                enabled: true
-            },
-            onClickEvent: function () {
-            }
-        },
-        theme: "plate-dark"
-    };
-
-    $("#location-search").easyAutocomplete(options);
-
     $('#select-source').on('change', function () {
         var val = $(this).val();
         if (val != site_id) {
