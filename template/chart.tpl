@@ -47,10 +47,7 @@
                             }
                         }
                     },
-                    series: series ,
-                    exporting: {
-                        enabled: false
-                    }
+                    series: series
                 }
         );
     }
