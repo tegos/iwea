@@ -14,7 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous"></script>
 <script src="/assets/js/highcharts.js"></script>
 <script src="/assets/js/exporting.js"></script>
-<script src="/assets/js/chart_setting.js"></script><script src="/assets/js/app.js"></script>
+<script src="/assets/js/highcharts-theme.js"></script><script src="/assets/js/app.js"></script>
 <script src="/assets/js/functions.js"></script>
 <script src="/assets/js/main.js"></script>
 
