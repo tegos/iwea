@@ -45,7 +45,7 @@ $(window).load(function () {
                 var selData = data.selectedData;
 
                 if (selData.value != site_id) {
-                    var loc = '/?action=set_site_id&site_id=' + selData.value;
+                    var loc = '/set-site?site_id=' + selData.value;
                     $.get(loc, function () {
                         location.reload();
                     });

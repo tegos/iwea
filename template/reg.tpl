@@ -29,8 +29,8 @@
             <div class="col-md-6">
                 <h2 class="section-title">Реєстрація</h2>
                 <p>Якщо Ви вже зареєстровані, перейдіть на сторінку
-                    <a href="/?action=auth_reg">Авторизації</a></p>
-                <form action="/?action=registration" method="post" class="contact-form">
+                    <a href="/login">Авторизації</a></p>
+                <form action="/register" method="post" class="contact-form">
                     <div class="row">
                         <div class="col-md-8">
                             <input name="email" type="email" placeholder="Ваш e-mail..."></div>
