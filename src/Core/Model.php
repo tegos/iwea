@@ -61,6 +61,11 @@ class Model extends Helper
         return $this->query("SELECT * FROM site WHERE status = 1");
     }
 
+    public function getAllSites(): array
+    {
+        return $this->query("SELECT * FROM site ORDER BY status DESC, id ASC");
+    }
+
     public function getCities(string|false $search = false): array
     {
         if ($search !== false) {
