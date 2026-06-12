@@ -14,20 +14,20 @@
     <div class="container all-text-header">
         <h1 class="section-title"><?php echo $page_title; ?></h1>
         <?php if(isset($url_prev)): ?>
-        <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
         <a href="<?php echo $url_prev; ?>">
             <span><?php echo $title_prev; ?></span>
         </a>
         <?php endif; ?>
 
-        <i class="fa fa-calendar" aria-hidden="true"></i>
+        <i class="fa-solid fa-calendar" aria-hidden="true"></i>
 
         <?php if(isset($url_next)): ?>
 
         <a href="<?php echo $url_next; ?>">
             <span><?php echo $title_next; ?></span>
         </a>
-        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         <?php endif; ?>
         <h2 class="text-center">Середня температура</h2>
     </div>

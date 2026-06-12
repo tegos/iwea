@@ -43,6 +43,7 @@ class Action extends Helper
         $view->now_month   = $this->getMonthUkr($dateNow->format('M'));
         $view->now_month_d = $dateNow->format('d');
         $view->site_id     = $this->model->getCookieSiteId();
+        $view->sites       = $this->model->getSites();
         $view->canonical   = Config::get('APP_DOMAIN') ?? '/';
         $view->chart       = $view->render('chart');
     }
