@@ -3,7 +3,7 @@
 <main class="main-content">
 
     <div class="container">
-        <div class="breadcrumb" itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+        <div class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
             <a itemprop="url" href="/">
                 <span itemprop="title">Головна</span>
             </a>

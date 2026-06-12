@@ -109,7 +109,6 @@ function findDistance(i, j) {
         var sqr = Math.pow(diff, 2);
         sum += sqr;
     }
-    console.log(sum);
     //return Math.sqrt(sum).toFixed(3);
     return (sum / n).toFixed(3);
 }
@@ -278,13 +277,8 @@ function getGroup() {
 
         $('#table-result-group').html(table);
 
-        console.log(gr_1);
-        console.log(gr_2);
-
         group_1 = [];
         group_2 = [];
-
-        console.dir(series_groups);
 
         series_groups.forEach(function (it) {
             gr_1.forEach(function (itt) {
@@ -299,9 +293,6 @@ function getGroup() {
                 }
             });
         });
-
-        console.log(group_1);
-        console.log(group_2);
 
         initChartGroups();
 

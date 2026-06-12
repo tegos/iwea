@@ -1,48 +1,7 @@
 User-agent: *
+Disallow: /api.php
+Disallow: /?action=reg
+Disallow: /?action=auth
+Disallow: /?action=registration
 
-Disallow: /*?utm_
-Disallow: /*?gclid=*
-Disallow: /*search*
-Disallow: /*admin*
-Disallow: /*sort=*
-Disallow: /*checkout/cart*
-Disallow: /*image*
-Disallow: /*price*
-
-User-agent: Googlebot
-
-Disallow: /*?utm_
-Disallow: /*?gclid=*
-Disallow: /*search*
-Disallow: /*admin*
-Disallow: /*sort=*
-Disallow: /*checkout/cart*
-Disallow: /*image*
-Disallow: /*price*
-
-
-User-agent: Yandex
-
-Disallow: /*?utm_
-Disallow: /*?gclid=*
-Disallow: /*search*
-Disallow: /*admin*
-Disallow: /*sort=*
-Disallow: /*checkout/cart*
-Disallow: /*image*
-Disallow: /*price*
-
-
-
-
-User-agent: Googlebot-Image
-
-Disallow: /
-Allow: /*image*
-
-User-agent: YandexImages
-Disallow: /
-Allow: /*image*
-
-Host: https://iwea.ml
-Sitemap: https://iwea.ml/sitemap.xml
+Sitemap: /sitemap.xml

@@ -12,11 +12,8 @@
     <?php if ($result): ?>
     <div class="container">
         <div class="alert alert-success">
-            <div class="pull-right">
-                <p class="close">&times;</p>
-            </div>
-            <strong>Success!</strong>
-            This alert box could indicate a successful or positive action.
+            <p class="close">&times;</p>
+            <p><?php echo htmlspecialchars($result); ?></p>
         </div>
     </div>
     <?php endif; ?>
