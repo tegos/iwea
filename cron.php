@@ -1,69 +1,70 @@
 <?php
-$start = microtime(true);
-include(__DIR__ . '/class/autoloader.php');
 
-new AutoLoader();
-$model = new  Model();
-$helper = new  Helper();
-$log = new PHPLogger(__DIR__ . "/data/logs");
-$tag = "CRON";
+use Dotenv\Dotenv;
+use Iwea\Core\{Model, Helper};
+use Iwea\Logger\Logger;
+use Iwea\Weather\{
+    OpenWeatherMap,
+    AerisWeather,
+    WorldWeatherOnline,
+    OpenMeteo,
+    SinoptikUa,
+    Meteoprog,
+    Interia,
+};
 
+require_once __DIR__ . '/vendor/autoload.php';
 
-$log->i($tag, '---------------------');
-$log->i($tag, "Cron start");
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'Europe/Kyiv');
 
-$state = $helper->getStateRun();
+$start  = microtime(true);
+$logger = new Logger();
+$tag    = 'CRON';
 
-//if ($state != 'run') {
+$logger->i($tag, '---------------------');
+$logger->i($tag, 'Cron start');
+
+$model  = new Model();
+$helper = new Helper();
+
+$sourceMap = [
+    'OpenWeatherMap'   => OpenWeatherMap::class,
+    'AerisWeather'     => AerisWeather::class,
+    'WorldWeatherOnline' => WorldWeatherOnline::class,
+    'OpenMeteo'        => OpenMeteo::class,
+    'SinoptikUa'       => SinoptikUa::class,
+    'Meteoprog'        => Meteoprog::class,
+    'Interia'          => Interia::class,
+];
+
 $helper->setStateRun('run');
 try {
-	// cities
-	$cities = $model->getCities();
+    $cities = $model->getCities();
+    $sites  = $model->getSites();
 
-	// sites
-	$sites = $model->getSites();
+    foreach ($sites as $site) {
+        $siteName = $site['name'];
+        if (!isset($sourceMap[$siteName])) {
+            $logger->i($tag, "Skip unknown site: {$siteName}");
+            continue;
+        }
 
-	$site_arr = array();
-	foreach ($sites as $site) {
-		$site_arr[] = $site['name'];
-	}
+        $logger->i($tag, "Site: {$siteName}");
+        $siteClass = new $sourceMap[$siteName]();
 
-	foreach ($sites as $site) {
-		//$next_site = $helper->getNextSite($site_arr);
-		//if ($site['name'] == $next_site) {
-
-		$site_id = $site['id'];
-		if (class_exists($site['name'])
-			//&& $site['name'] == 'Meteoprog'
-		) {
-			$log->i($tag, "Site: {$site['name']}");
-			$site_class = new $site['name']();
-
-			foreach ($cities as $city) {
-				$site_class->buildQuery($city);
-				$site_class->setSiteId($site['id']);
-				$site_class->setCityId($city['id']);
-				$site_class->addWeatherData();
-			}
-		}
-
-		$site_id++;
-		$next_site = $model->getSite($site_id);
-		while ($next_site && !$next_site['status']) {
-			$site_id++;
-			$next_site = $model->getSite($site_id);
-		}
-
-		$helper->setNextSite(@$next_site['name']);
-		$helper->setStateRun('');
-		//break;
-		//}
-
-	}
-} catch (Exception $e) {
-	$helper->setStateRun('');
-	$log->e($tag, $e->getMessage());
+        foreach ($cities as $city) {
+            $siteClass->buildQuery($city);
+            $siteClass->setSiteId((int)$site['id']);
+            $siteClass->setCityId((int)$city['id']);
+            $siteClass->addWeatherData();
+        }
+    }
+} catch (\Throwable $e) {
+    $logger->e($tag, $e->getMessage());
+} finally {
+    $helper->setStateRun('');
 }
 
-
-$log->i($tag, 'Час виконання: ' . round(microtime(true) - $start, 4) . ' с.');
+$logger->i($tag, 'Час виконання: ' . round(microtime(true) - $start, 4) . ' с.');

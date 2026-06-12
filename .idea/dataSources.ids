@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<component name="dataSourceStorage">
-  <data-source name="MySQL - @db2.unlim.com" uuid="d93039fc-f527-482b-bb25-74a2105ab93e">
-    <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
-  </data-source>
-  <data-source name="MySQL - @mysql.noisy2.myjino.ru" uuid="5795480a-a675-44ee-9a3c-989e905e656a">
-    <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
-  </data-source>
-</component>
