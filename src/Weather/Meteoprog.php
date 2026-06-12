@@ -17,8 +17,9 @@ class Meteoprog implements ISiteHelper
     public function __construct()
     {
         $this->client = new Client([
-            'timeout' => 15,
-            'headers' => ['User-Agent' => 'Mozilla/5.0 (compatible; iWea/2.0)'],
+            'timeout'         => 15,
+            'allow_redirects' => true,
+            'headers'         => ['User-Agent' => 'Mozilla/5.0 (compatible; iWea/2.0)'],
         ]);
         $this->model = new Model();
     }
@@ -36,7 +37,7 @@ class Meteoprog implements ISiteHelper
     public function buildQuery(array $city): void
     {
         $cityName = $city['name_tr'];
-        $this->url = 'https://www.meteoprog.ua/ua/review/'
+        $this->url = 'https://www.meteoprog.com/ua/review/'
             . $cityName . '/?_pjax=div%23reviewforecast_pjax_container';
     }
 
