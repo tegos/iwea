@@ -50,7 +50,6 @@ fabric.properties
 file/
 !/composer.phar
 /composer.phar
-/composer.lock
 /vendor/
 .idea/codeStyleSettings.xml
 .idea/composerJson.xml
