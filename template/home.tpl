@@ -13,10 +13,12 @@
     </div>
 
     <div class="container">
-        <select id="select-source"></select>
-        <script>
-            site_id = '<?php echo $site_id; ?>';
-        </script>
+        <select id="select-source">
+            <?php foreach ($sites as $s): ?>
+            <option value="<?= (int)$s['id'] ?>"<?= ($s['id'] == $site_id) ? ' selected' : '' ?>><?= htmlspecialchars($s['name']) ?></option>
+            <?php endforeach; ?>
+        </select>
+        <script>var site_id = '<?= (int)$site_id ?>';</script>
     </div>
 
 

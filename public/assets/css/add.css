@@ -292,7 +292,8 @@ body {
 
 #source-list-sites :checked + label:before {
     content: "\f00c";
-    font-family: FontAwesome;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     background-color: #009ad8;
     transform: scale(1);
 }
@@ -353,7 +354,8 @@ body {
 
 #source-list-sites-for-matrix :checked + label:before {
     content: "\f00c";
-    font-family: FontAwesome;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     background-color: #009ad8;
     transform: scale(1);
 }

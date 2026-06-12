@@ -1,10 +1,4 @@
-/**
- * Created by IBAH on 08.05.2016.
- */
-
-
-$(window).load(function () {
-    
+$(function () {
 
     try {
         initChartMin();
@@ -13,12 +7,10 @@ $(window).load(function () {
     catch (err) {
     }
 
-
     $("svg").each(function () {
         $(this).find("text").last().remove();
         $(this).find("desc").remove();
     });
-
 
     var options = {
         url: '/api.php?method=getSCities',
@@ -27,7 +19,6 @@ $(window).load(function () {
                 enabled: true
             },
             onClickEvent: function () {
-                //$('.find-location').submit();
             }
         },
         theme: "plate-dark"
@@ -35,25 +26,13 @@ $(window).load(function () {
 
     $("#location-search").easyAutocomplete(options);
 
-    $.getJSON('/api.php?method=getSitesForSelect', function (dd) {
-
-        $('#select-source').ddslick({
-            data: dd,
-            width: '100%',
-            imagePosition: 'left',
-            onSelected: function (data) {
-                var selData = data.selectedData;
-
-                if (selData.value != site_id) {
-                    var loc = '/set-site?site_id=' + selData.value;
-                    $.get(loc, function () {
-                        location.reload();
-                    });
-                }
-                //console.log(selData);
-            }
-        });
-
+    $('#select-source').on('change', function () {
+        var val = $(this).val();
+        if (val != site_id) {
+            $.get('/set-site?site_id=' + val, function () {
+                location.reload();
+            });
+        }
     });
 
     try {
@@ -61,10 +40,8 @@ $(window).load(function () {
     } catch (e) {
     }
 
-
     $('#source-list-sites input').change(function () {
         var ul = $('#source-list-sites');
-        //var id_site = $(this).val();
 
         var chart = $('#container-chart-diff').highcharts();
 
@@ -95,13 +72,8 @@ $(window).load(function () {
             series_dif_max.data = data_diff_max;
             series_dif_max.type = 'line';
 
-            chart.addSeries(
-                series_dif
-            );
-            chart.addSeries(
-                series_dif_max
-            );
-
+            chart.addSeries(series_dif);
+            chart.addSeries(series_dif_max);
 
         } else {
             if ($('#source-list-sites input:checked').length > 2) {
@@ -135,7 +107,4 @@ $(window).load(function () {
         alert.fadeOut(500);
     });
 
-
 });
-
-

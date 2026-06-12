@@ -17,7 +17,12 @@
     <link rel="icon" href="/assets/images/icons/iwea.png" sizes="32x32" type="image/png"/>
     <link rel="apple-touch-icon" href="/assets/images/icons/apple-touch-icon.png"/>
 
-    <!--link rel="stylesheet" href="/assets/css/style.css" media="all"/-->
+    <link rel="stylesheet" href="/assets/css/roboto.css"/>
+    <link rel="stylesheet" href="/assets/css/responsive.css"/>
+    <link rel="stylesheet" href="/assets/css/easy-autocomplete.css"/>
+    <link rel="stylesheet" href="/assets/css/style.css"/>
+    <link rel="stylesheet" href="/assets/css/add.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous"/>
     <style>
         html {
             background: #fff;
@@ -69,7 +74,7 @@
             </a>
 
             <div class="main-navigation">
-                <button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
+                <button type="button" class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
                 <ul class="menu">
                     <?php $a = $current_action ?? 'home'; ?>
                     <li class="menu-item<?= $a === 'home'      ? ' current-menu-item' : '' ?>"><a href="/">Головна</a></li>
