@@ -2,7 +2,7 @@
 
 iWea — web weather aggregator that compares forecasts from multiple sources on interactive Highcharts graphs.
 
-> Compares temperature forecasts from 7 active sources side by side, displayed on a single interactive chart.
+> Compares temperature forecasts from 5 active sources side by side, displayed on a single interactive chart.
 
 ---
 
@@ -10,15 +10,15 @@ iWea — web weather aggregator that compares forecasts from multiple sources on
 
 | Source | Type | Status |
 |---|---|---|
-| OpenWeatherMap | API | Active |
-| Sinoptik UA | Scraper | Active |
-| Meteoprog | Scraper | Active |
-| AerisWeather | API | Active |
-| WorldWeatherOnline | API | Active |
-| Interia | Scraper | Active |
-| Open-Meteo | API | Active (added 2026) |
-| Dark Sky | API | Removed (shut down 2019) |
-| Yahoo Weather | API | Removed (shut down 2017) |
+| OpenWeatherMap | API | ✅ Active |
+| Open-Meteo | API | ✅ Active (free, no key needed) |
+| Sinoptik UA | Scraper | ✅ Active |
+| Meteoprog | Scraper | ✅ Active |
+| Interia | Scraper | ✅ Active |
+| AerisWeather | API | ⏸ Disabled (no free tier) |
+| WorldWeatherOnline | API | ⏸ Disabled (paid only) |
+| Dark Sky | API | ❌ Removed (shut down 2019) |
+| Yahoo Weather | API | ❌ Removed (shut down 2017) |
 
 ---
 
@@ -80,9 +80,6 @@ cp .env.example .env
 | `DB_USER` | Database user |
 | `DB_PASS` | Database password |
 | `OWM_API_KEY` | OpenWeatherMap API key |
-| `AERIS_CLIENT_ID` | AerisWeather client ID |
-| `AERIS_CLIENT_SECRET` | AerisWeather client secret |
-| `WWO_API_KEY` | WorldWeatherOnline API key |
 | `APP_TIMEZONE` | PHP timezone (e.g. `Europe/Kyiv`) |
 | `APP_DEFAULT_CITY` | DB id of the default city (`city` table) |
 | `APP_DEFAULT_SITE` | DB id of the default weather source (`site` table) |
