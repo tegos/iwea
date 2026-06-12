@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS `site` (
   `status`    TINYINT(1)      NOT NULL DEFAULT 1,
   `color`     VARCHAR(32)     NOT NULL DEFAULT '',
   `image_url` VARCHAR(512)    NOT NULL DEFAULT '',
+  `url`       VARCHAR(512)    NOT NULL DEFAULT '',
+  `country`   VARCHAR(100)    NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `idx_site_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -94,12 +96,14 @@ ON DUPLICATE KEY UPDATE
   `cid_pl`       = VALUES(`cid_pl`);
 
 -- Weather sources (7 sources used in the codebase)
-INSERT INTO `site` (`id`, `name`, `status`, `color`, `image_url`) VALUES
-  (1, 'OpenWeatherMap',   1, 'rgb(240, 87,  46)',  ''),
-  (2, 'AerisWeather',     1, 'rgb(46,  87,  240)', ''),
-  (3, 'WorldWeatherOnline',1,'rgb(240, 200, 46)',  ''),
-  (4, 'OpenMeteo',        1, 'rgb(46,  200, 100)', ''),
-  (5, 'SinoptikUa',       1, 'rgb(200, 46,  200)', ''),
-  (6, 'Meteoprog',        1, 'rgb(46,  200, 200)', ''),
-  (7, 'Interia',          1, 'rgb(200, 100, 46)',  '')
-ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
+INSERT INTO `site` (`id`, `name`, `status`, `color`, `image_url`, `url`, `country`) VALUES
+  (1, 'OpenWeatherMap',    1, 'rgb(240, 87,  46)',  '', 'https://openweathermap.org/',        'США'),
+  (2, 'AerisWeather',      1, 'rgb(46,  87,  240)', '', 'https://www.aerisweather.com/',      'США'),
+  (3, 'WorldWeatherOnline',1, 'rgb(240, 200, 46)',  '', 'https://www.worldweatheronline.com/','Велика Британія'),
+  (4, 'OpenMeteo',         1, 'rgb(46,  200, 100)', '', 'https://open-meteo.com/',            'Австрія'),
+  (5, 'SinoptikUa',        1, 'rgb(200, 46,  200)', '', 'https://ua.sinoptik.ua/',            'Україна'),
+  (6, 'Meteoprog',         1, 'rgb(46,  200, 200)', '', 'https://www.meteoprog.ua/',          'Україна'),
+  (7, 'Interia',           1, 'rgb(200, 100, 46)',  '', 'https://pogoda.interia.pl/',         'Польща')
+ON DUPLICATE KEY UPDATE
+  `url`     = VALUES(`url`),
+  `country` = VALUES(`country`);

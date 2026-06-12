@@ -97,13 +97,15 @@ class Action extends Helper
 
     public function auth_reg(Template &$view): void
     {
-        $view->title  = 'iWEA — Авторизація';
-        $view->result = $this->model->getMessage('reg_success') ? 'Вітаємо! Ви успішно зареєструвались.' : false;
+        $view->title     = 'iWEA — Авторизація';
+        $view->canonical = (Config::get('APP_DOMAIN') ?? '') . '/auth_reg';
+        $view->result    = $this->model->getMessage('reg_success') ? 'Вітаємо! Ви успішно зареєструвались.' : false;
     }
 
     public function reg(Template &$view): void
     {
-        $view->title = 'iWEA — реєстрація';
+        $view->title     = 'iWEA — реєстрація';
+        $view->canonical = (Config::get('APP_DOMAIN') ?? '') . '/reg';
         if ($this->model->getMessage('error')) {
             $view->error = unserialize($this->model->getMessage('error'));
             $this->model->unsetMessage('error');
