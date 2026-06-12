@@ -14,11 +14,15 @@ SET NAMES utf8mb4;
 -- Referenced columns: id, name, name_iso, lat, lon
 -- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS `city` (
-  `id`       INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  `name`     VARCHAR(255)    NOT NULL,
-  `name_iso` VARCHAR(255)    NOT NULL DEFAULT '',
-  `lat`      DECIMAL(9,6)    NOT NULL DEFAULT 0.000000,
-  `lon`      DECIMAL(9,6)    NOT NULL DEFAULT 0.000000,
+  `id`           INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+  `name`         VARCHAR(255)    NOT NULL,
+  `name_iso`     VARCHAR(255)    NOT NULL DEFAULT '',
+  `name_tr`      VARCHAR(255)    NOT NULL DEFAULT '',
+  `name_sinoptik` VARCHAR(255)   NOT NULL DEFAULT '',
+  `name_pl`      VARCHAR(255)    NOT NULL DEFAULT '',
+  `cid_pl`       INT UNSIGNED    NOT NULL DEFAULT 0,
+  `lat`          DECIMAL(9,6)    NOT NULL DEFAULT 0.000000,
+  `lon`          DECIMAL(9,6)    NOT NULL DEFAULT 0.000000,
   PRIMARY KEY (`id`),
   KEY `idx_city_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -76,13 +80,18 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- ==========================================
 
 -- Cities (lat/lon accurate to 4 decimal places)
-INSERT INTO `city` (`id`, `name`, `name_iso`, `lat`, `lon`) VALUES
-  (1, 'Київ',   'Kyiv',   50.4501,  30.5234),
-  (2, 'Львів',  'Lviv',   49.8397,  24.0297),
-  (3, 'Одеса',  'Odesa',  46.4825,  30.7233),
-  (4, 'Харків', 'Kharkiv', 49.9935,  36.2304),
-  (5, 'Дніпро', 'Dnipro', 48.4647,  35.0462)
-ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
+-- name_tr: Meteoprog slug | name_sinoptik: Sinoptik UA slug | name_pl/cid_pl: Interia PL
+INSERT INTO `city` (`id`, `name`, `name_iso`, `name_tr`, `name_sinoptik`, `name_pl`, `cid_pl`, `lat`, `lon`) VALUES
+  (1, 'Київ',   'Kyiv',    'Kyiv',    'київ',    'kijow',           60664, 50.4501, 30.5234),
+  (2, 'Львів',  'Lviv',    'Lviv',    'львів',   'lwow',            60701, 49.8397, 24.0297),
+  (3, 'Одеса',  'Odesa',   'Odessa',  'одеса',   'odessa',          63090, 46.4825, 30.7233),
+  (4, 'Харків', 'Kharkiv', 'Kharkiv', 'харків',  'charkow',         55837, 49.9935, 36.2304),
+  (5, 'Дніпро', 'Dnipro',  'Dnepropetrovsk', 'дніпро', 'dniepropietrowsk', 51882, 48.4647, 35.0462)
+ON DUPLICATE KEY UPDATE
+  `name_tr`      = VALUES(`name_tr`),
+  `name_sinoptik`= VALUES(`name_sinoptik`),
+  `name_pl`      = VALUES(`name_pl`),
+  `cid_pl`       = VALUES(`cid_pl`);
 
 -- Weather sources (7 sources used in the codebase)
 INSERT INTO `site` (`id`, `name`, `status`, `color`, `image_url`) VALUES

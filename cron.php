@@ -20,7 +20,7 @@ $dotenv->load();
 date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'Europe/Kyiv');
 
 $start  = microtime(true);
-$logger = new Logger();
+$logger = new Logger(__DIR__ . '/data/logs');
 $tag    = 'CRON';
 
 $logger->i($tag, '---------------------');
