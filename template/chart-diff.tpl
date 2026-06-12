@@ -49,10 +49,7 @@
                             }
                         }
                     },
-                    series: series ,
-                    exporting: {
-                        enabled: false
-                    }
+                    series: series
                 }
         );
     }
@@ -103,10 +100,7 @@
                             }
                         }
                     },
-                    series: series_max,
-                    exporting: {
-                        enabled: false
-                    }
+                    series: series_max
                 }
         );
     }

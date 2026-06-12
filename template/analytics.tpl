@@ -50,8 +50,7 @@
             },
             tooltip: { crosshairs: true, shared: true },
             plotOptions: { spline: { marker: { radius: 5, lineColor: '#555', lineWidth: 1 }, dataLabels: { enabled: true } } },
-            series: group_1,
-            exporting: { enabled: false }
+            series: group_1
         });
 
         $('#container-chart-group-2').highcharts({
@@ -64,8 +63,7 @@
             },
             tooltip: { crosshairs: true, shared: true },
             plotOptions: { spline: { marker: { radius: 5, lineColor: '#555', lineWidth: 1 }, dataLabels: { enabled: true } } },
-            series: group_2,
-            exporting: { enabled: false }
+            series: group_2
         });
     }
 </script>
