@@ -78,22 +78,18 @@
             <div class="main-navigation">
                 <button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
                 <ul class="menu">
-                    <li class="menu-item current-menu-item"><a href="/">Головна</a></li>
-                    <li class="menu-item"><a href="/info">Список джерел</a></li>
-                    <li class="menu-item"><a href="/all">Погода сьогодні</a></li>
-                    <li class="menu-item"><a href="/analytics">Аналітика</a></li>
-                    <?php /* ?>
-                    <?php if (!$user){ ?>
-                    <li class="menu-item"><a href="/?action=auth_reg">Авторизація Реєстрація</a></li>
-                    <?php }else{ ?>
+                    <?php $a = $current_action ?? 'home'; ?>
+                    <li class="menu-item<?= $a === 'home'      ? ' current-menu-item' : '' ?>"><a href="/">Головна</a></li>
+                    <li class="menu-item<?= $a === 'info'      ? ' current-menu-item' : '' ?>"><a href="/info">Список джерел</a></li>
+                    <li class="menu-item<?= $a === 'all'       ? ' current-menu-item' : '' ?>"><a href="/all">Погода сьогодні</a></li>
+                    <li class="menu-item<?= $a === 'analytics' ? ' current-menu-item' : '' ?>"><a href="/analytics">Аналітика</a></li>
+                    <?php if (!$user): ?>
+                    <li class="menu-item<?= in_array($a, ['auth_reg','reg']) ? ' current-menu-item' : '' ?>"><a href="/?action=auth_reg">Увійти</a></li>
+                    <?php else: ?>
                     <li class="menu-item">
-                        <a href="/?action=account">
-                            <?php echo $user['name']; ?><br/>
-                            <?php echo $user['email']; ?>
-                        </a>
+                        <a href="/?action=account"><?= htmlspecialchars($user['name']) ?></a>
                     </li>
-                    <?php } ?>
-                    <?php */ ?>
+                    <?php endif; ?>
                 </ul> <!-- .menu -->
             </div> <!-- .main-navigation -->
 

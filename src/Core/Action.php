@@ -24,9 +24,10 @@ class Action extends Helper
             'AerisWeather', 'WorldWeatherOnline', 'Interia', 'OpenMeteo',
             $cityName,
         ];
-        $view->keywords    = implode(',', array_map('mb_strtolower', $keywords));
-        $view->description = "iWea — порівнюй, аналізуй погоду і отримуй достовірний результат. Погода у {$cityName} на 7 днів.";
-        $view->user        = $this->isUser();
+        $view->keywords       = implode(',', array_map('mb_strtolower', $keywords));
+        $view->description    = "iWea — порівнюй, аналізуй погоду і отримуй достовірний результат. Погода у {$cityName} на 7 днів.";
+        $view->user           = $this->isUser();
+        $view->current_action = $_GET['action'] ?? 'home';
     }
 
     public function home(Template &$view): void
