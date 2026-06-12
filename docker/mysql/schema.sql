@@ -7,6 +7,8 @@ CREATE DATABASE IF NOT EXISTS `iwea`
 
 USE `iwea`;
 
+SET NAMES utf8mb4;
+
 -- --------------------------------------------------
 -- city
 -- Referenced columns: id, name, name_iso, lat, lon
