@@ -2,6 +2,7 @@
     <div class="fullwidth-block">
         <div class="container">
             <div id="container-chart-diff"></div>
+            <div id="container-chart-max" style="margin-top:20px;"></div>
         </div>
 
     </div>
