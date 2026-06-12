@@ -13,10 +13,9 @@
 
 
     <link rel="canonical" href="<?php echo $canonical; ?>"/>
-    <link rel="icon" href="/assets/images/icons/iwea.png"/>
-    <link rel="shortcut icon" href="/assets/images/icons/iwea.png"/>
-    <link rel="icon" href="/assets/images/icons/iwea.png" type="image/png"/>
-    <link rel="icon" href="/assets/images/icons/favicon.ico" type="image/x-icon"/>
+    <link rel="icon" href="/assets/images/icons/favicon.ico" sizes="16x16 32x32 48x48" type="image/x-icon"/>
+    <link rel="icon" href="/assets/images/icons/iwea.png" sizes="32x32" type="image/png"/>
+    <link rel="apple-touch-icon" href="/assets/images/icons/apple-touch-icon.png"/>
 
     <!--link rel="stylesheet" href="/assets/css/style.css" media="all"/-->
     <style>
