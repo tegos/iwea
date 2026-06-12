@@ -37,8 +37,8 @@ class Controller extends Helper
             return ['action' => 'sitemap', 'arg' => null];
         }
 
-        if (str_starts_with($uri, 'all/')) {
-            return ['action' => 'all', 'arg' => substr($uri, 4)];
+        if (str_starts_with($uri, 'compare/')) {
+            return ['action' => 'all', 'arg' => substr($uri, 8)];
         }
 
         if ($uri === 'login') {
@@ -56,6 +56,8 @@ class Controller extends Helper
         }
 
         $slugMap = [
+            'sources' => 'info',
+            'compare' => 'all',
             'set-city' => 'set_city_id',
             'set-site' => 'set_site_id',
         ];

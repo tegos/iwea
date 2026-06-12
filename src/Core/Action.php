@@ -67,13 +67,13 @@ class Action extends Helper
     {
         $view->title     = 'Список джерел';
         $view->sites     = $this->model->getSites();
-        $view->canonical = (Config::get('APP_DOMAIN') ?? '') . '/info';
+        $view->canonical = (Config::get('APP_DOMAIN') ?? '') . '/sources';
     }
 
     public function sitemap(): void
     {
         $domain = Config::get('APP_DOMAIN') ?? '';
-        $pages  = ['', 'info', 'all', 'analytics', 'search'];
+        $pages  = ['', 'sources', 'compare', 'analytics', 'search'];
         $start  = new \DateTime(Config::get('APP_START_DATE') ?? '2016-05-12');
         $end    = new \DateTime();
         $days   = $this->dateTimesToDays($start, $end);
@@ -86,7 +86,7 @@ class Action extends Helper
         $dateStart = (new \DateTime())->modify("-{$days} days");
         for ($i = 0; $i < $days; $i++) {
             $param   = $this->base64_url_encode(http_build_query(['d' => $dateStart->format('d-m-Y')]));
-            $output .= "<url><loc>{$domain}/all/{$param}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>";
+            $output .= "<url><loc>{$domain}/compare/{$param}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>";
             $dateStart->modify('+1 day');
         }
         $output .= '</urlset>';
@@ -138,7 +138,7 @@ class Action extends Helper
 
         $dateFormat = $dateNow->format('Y-m-d');
         $weather    = $this->model->getWeatherAll($dateFormat);
-        $canonical  = (Config::get('APP_DOMAIN') ?? '') . "/all{$paramD}";
+        $canonical  = (Config::get('APP_DOMAIN') ?? '') . "/compare{$paramD}";
 
         $view->canonical   = $canonical;
         $view->categories  = json_encode($weather['categories']);
@@ -159,14 +159,14 @@ class Action extends Helper
             $prev = (clone $dateNow)->modify('-1 day');
             $next = (clone $dateNow)->modify('+1 day');
             if ($startDate < $prev) {
-                $view->url_prev   = '/all/' . $this->base64_url_encode(http_build_query(['d' => $prev->format('d-m-Y')]));
+                $view->url_prev   = '/compare/' . $this->base64_url_encode(http_build_query(['d' => $prev->format('d-m-Y')]));
                 $view->title_prev = $this->getTitlePage($prev);
             }
-            $view->url_next   = '/all/' . $this->base64_url_encode(http_build_query(['d' => $next->format('d-m-Y')]));
+            $view->url_next   = '/compare/' . $this->base64_url_encode(http_build_query(['d' => $next->format('d-m-Y')]));
             $view->title_next = $this->getTitlePage($next);
         } else {
             $prev = (clone $dateNow)->modify('-1 day');
-            $view->url_prev   = '/all/' . $this->base64_url_encode(http_build_query(['d' => $prev->format('d-m-Y')]));
+            $view->url_prev   = '/compare/' . $this->base64_url_encode(http_build_query(['d' => $prev->format('d-m-Y')]));
             $view->title_prev = $this->getTitlePage($prev);
         }
 
