@@ -1,4 +1,7 @@
 {
+  "name": "iwea/app",
+  "description": "Web weather aggregator — compare forecasts from multiple sources",
+  "license": "MIT",
   "require": {
     "php": "^8.2",
     "vlucas/phpdotenv": "^5.6",

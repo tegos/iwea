@@ -10,4 +10,11 @@ $dotenv->load();
 
 date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'Europe/Kyiv');
 
+header('Content-Type: application/json');
+
+set_exception_handler(function (\Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+});
+
 new Api();
