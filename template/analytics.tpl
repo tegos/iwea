@@ -24,9 +24,9 @@
 
         <br/>
 
-        <div class="container" id="groups-chart">
-            <div class="pull-left"  id="container-chart-group-1"></div>
-            <div class="pull-right" id="container-chart-group-2"></div>
+        <div id="groups-chart" style="display:flex;gap:16px;">
+            <div style="flex:1;min-width:0" id="container-chart-group-1"></div>
+            <div style="flex:1;min-width:0" id="container-chart-group-2"></div>
         </div>
     </div>
 </div>
