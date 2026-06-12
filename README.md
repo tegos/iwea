@@ -1,8 +1,6 @@
 # iWea
 
-iWea — web weather aggregator that compares forecasts from multiple sources on interactive Highcharts graphs.
-
-> Compares temperature forecasts from 5 active sources side by side, displayed on a single interactive chart.
+iWea is a web weather aggregator that compares forecasts from multiple sources on interactive Highcharts graphs.
 
 ---
 
@@ -10,15 +8,15 @@ iWea — web weather aggregator that compares forecasts from multiple sources on
 
 | Source | Type | Status |
 |---|---|---|
-| OpenWeatherMap | API | ✅ Active |
-| Open-Meteo | API | ✅ Active (free, no key needed) |
-| Sinoptik UA | Scraper | ✅ Active |
-| Meteoprog | Scraper | ✅ Active |
-| Interia | Scraper | ✅ Active |
-| AerisWeather | API | ⏸ Disabled (no free tier) |
-| WorldWeatherOnline | API | ⏸ Disabled (paid only) |
-| Dark Sky | API | ❌ Removed (shut down 2019) |
-| Yahoo Weather | API | ❌ Removed (shut down 2017) |
+| OpenWeatherMap | API | Active |
+| Open-Meteo | API | Active (free, no key needed) |
+| Sinoptik UA | Scraper | Active |
+| Meteoprog | Scraper | Active |
+| Interia | Scraper | Active |
+| AerisWeather | API | Disabled (no free tier) |
+| WorldWeatherOnline | API | Disabled (paid only) |
+| Dark Sky | API | Removed (shut down 2019) |
+| Yahoo Weather | API | Removed (shut down 2017) |
 
 ---
 
@@ -42,7 +40,7 @@ Custom MVC: **Controller → Action → Model → Template**
 - PSR-4 autoloading under the `Iwea\` namespace (`src/`)
 - File-based query cache with a 3-hour TTL
 - PDO prepared statements for all database queries
-- `public/` is the web root; everything else is outside the document root
+- `public/` is the web root; all other files live outside the document root
 
 ---
 
