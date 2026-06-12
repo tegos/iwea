@@ -26,8 +26,7 @@ class Action extends Helper
         ];
         $view->keywords       = implode(',', array_map('mb_strtolower', $keywords));
         $view->description    = "iWea — порівнюй, аналізуй погоду і отримуй достовірний результат. Погода у {$cityName} на 7 днів.";
-        $view->user           = $this->isUser();
-        $view->current_action = $_GET['action'] ?? 'home';
+        $view->user = $this->isUser();
     }
 
     public function home(Template &$view): void
@@ -73,7 +72,7 @@ class Action extends Helper
     public function sitemap(): void
     {
         $domain = Config::get('APP_DOMAIN') ?? '';
-        $pages  = ['', 'sources', 'compare', 'analytics', 'search'];
+        $pages  = ['', 'sources', 'compare', 'analytics', 'accuracy', 'diff', 'search'];
         $start  = new \DateTime(Config::get('APP_START_DATE') ?? '2016-05-12');
         $end    = new \DateTime();
         $days   = $this->dateTimesToDays($start, $end);
@@ -176,20 +175,39 @@ class Action extends Helper
     public function analytics(Template &$view): void
     {
         $weather   = $this->model->getWeatherAll(0);
+        $seriesMax = $weather['series_max'];
+        array_pop($seriesMax);
+
+        $view->categories = json_encode($weather['categories']);
+        $view->series_max = json_encode($seriesMax);
+        $view->city_name  = $weather['city_name'];
+        $view->title      = 'Класифікація джерел';
+        $view->canonical  = (Config::get('APP_DOMAIN') ?? '') . '/analytics';
+    }
+
+    public function accuracy(Template &$view): void
+    {
+        $view->title     = 'Точність прогнозу';
+        $view->canonical = (Config::get('APP_DOMAIN') ?? '') . '/accuracy';
+    }
+
+    public function diff(Template &$view): void
+    {
+        $weather   = $this->model->getWeatherAll(0);
         $series    = $weather['series'];
         $seriesMax = $weather['series_max'];
         array_pop($series);
         array_pop($seriesMax);
 
-        $view->categories  = json_encode($weather['categories']);
-        $view->series      = json_encode($series);
-        $view->series_max  = json_encode($seriesMax);
-        $view->city_name   = $weather['city_name'];
-        $view->title       = 'Аналітика';
-        $view->canonical   = (Config::get('APP_DOMAIN') ?? '') . '/analytics';
-        $view->sites       = $this->model->getSites();
-        $view->site_id     = $this->model->getCookieSiteId();
-        $view->chart_diff  = $view->render('chart-diff');
+        $view->categories = json_encode($weather['categories']);
+        $view->series     = json_encode($series);
+        $view->series_max = json_encode($seriesMax);
+        $view->city_name  = $weather['city_name'];
+        $view->title      = 'Різниця джерел';
+        $view->canonical  = (Config::get('APP_DOMAIN') ?? '') . '/diff';
+        $view->sites      = $this->model->getSites();
+        $view->site_id    = $this->model->getCookieSiteId();
+        $view->chart_diff = $view->render('chart-diff');
     }
 
     public function auth(Template &$view): void

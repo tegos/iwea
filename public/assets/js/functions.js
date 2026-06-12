@@ -102,15 +102,13 @@ function buildTableDistance() {
 }
 
 function findDistance(i, j) {
-    var n = series_max[i]['data'].length;
-    var data = series_max[i]['data'];
-    var sum = +0;
+    var n = Math.min(series_max[i]['data'].length, series_max[j]['data'].length);
+    if (n === 0) return '0.000';
+    var sum = 0;
     for (var k = 0; k < n; k++) {
         var diff = series_max[i]['data'][k] - series_max[j]['data'][k];
-        var sqr = Math.pow(diff, 2);
-        sum += sqr;
+        sum += Math.pow(diff, 2);
     }
-    //return Math.sqrt(sum).toFixed(3);
     return (sum / n).toFixed(3);
 }
 
@@ -201,8 +199,7 @@ function getGroup() {
     var matrix = Create2DArray(n, n);
     for (var i = 0; i < n; i++) {
         for (var j = 0; j < n; j++) {
-            var dist = parseFloat(findDistance(i, j));
-            matrix[i][j] = (dist);
+            matrix[i][j] = parseFloat(findDistance(i, j));
         }
     }
 
@@ -211,8 +208,8 @@ function getGroup() {
         for (var u = 0; u < n; ++u)
             for (var v = 0; v < n; ++v) {
                 if (matrix[u][i] + matrix[i][v] < matrix[u][v]) {
-                    matrix[u][v] = matrix[u][i] + matrix[i][v]
-                    next[u][v] = i
+                    matrix[u][v] = matrix[u][i] + matrix[i][v];
+                    next[u][v] = i;
                 }
             }
 
@@ -222,88 +219,45 @@ function getGroup() {
     groupOne.push(0);
     while (groupOne.length < Math.ceil(n / 2)) {
         var last_path = groupOne.last();
-        var arr = matrix[last_path];
-        var m = minimum(arr, groupOne);
-        var ind = matrix[last_path].indexOf(m);
-        groupOne.push(ind);
+        var m = minimum(matrix[last_path], groupOne);
+        groupOne.push(matrix[last_path].indexOf(m));
     }
 
     for (var i = 0; i < n; i++) {
-        if (groupOne.indexOf(i) == -1) {
-            groupTwo.push(i + 1);
+        if (groupOne.indexOf(i) === -1) {
+            groupTwo.push(i);
         }
     }
 
-    groupOne.forEach(function (it, i) {
-        groupOne[i] = it + 1;
-    });
+    // Resolve group names directly from series_groups (no API call needed)
+    var gr_1 = groupOne.map(function(idx) { return series_groups[idx].name; });
+    var gr_2 = groupTwo.map(function(idx) { return series_groups[idx].name; });
 
-
-    var table = $('<table border="1"  class="source-table group-class"/>');
-    var tr = $('<tr/>');
+    var table = $('<table border="1" class="source-table group-class"/>');
+    var tr  = $('<tr/>');
     var tr1 = $('<tr/>');
     $('<td>Група 1</td><td>Група 2</td>').appendTo(tr);
     tr.appendTo(table);
 
-    $.getJSON('/api.php?method=getSites', function (json) {
+    $('<td/>').html(gr_1.join(', ')).appendTo(tr1);
+    $('<td/>').html(gr_2.join(', ')).appendTo(tr1);
+    tr1.appendTo(table);
+    $('#table-result-group').html(table);
 
-        var gr_1 = [], gr_2 = [];
-        groupOne.forEach(function (itt) {
-            json.forEach(function (it) {
-                if (itt == it.id) {
-                    gr_1.push(it.name);
-                }
-            });
-        });
+    group_1 = [];
+    group_2 = [];
 
-        groupTwo.forEach(function (itt) {
-            json.forEach(function (it) {
-                if (itt == it.id) {
-                    gr_2.push(it.name);
-                }
-            });
-        });
-
-        var td_1 = $('<td/>');
-        var td_2 = $('<td/>');
-
-        td_1.html(gr_1.join(', '));
-        td_2.html(gr_2.join(', '));
-
-        td_1.appendTo(tr1);
-        td_2.appendTo(tr1);
-        tr1.appendTo(table);
-
-        $('#table-result-group').html(table);
-
-        group_1 = [];
-        group_2 = [];
-
-        series_groups.forEach(function (it) {
-            gr_1.forEach(function (itt) {
-                if (it.name == itt) {
-                    group_1.push(it);
-                }
-            });
-
-            gr_2.forEach(function (itt) {
-                if (it.name == itt) {
-                    group_2.push(it);
-                }
-            });
-        });
-
-        initChartGroups();
-
-        $("#groups-chart svg").each(function () {
-            $(this).find("text").last().remove();
-            $(this).find("desc").remove();
-        });
-
+    series_groups.forEach(function(it) {
+        if (gr_1.indexOf(it.name) !== -1) group_1.push(it);
+        if (gr_2.indexOf(it.name) !== -1) group_2.push(it);
     });
 
+    initChartGroups();
 
-    //console.log(groupOne);
+    $('#groups-chart svg').each(function() {
+        $(this).find('text').last().remove();
+        $(this).find('desc').remove();
+    });
 }
 
 function buildTableAnalyze(days, site) {

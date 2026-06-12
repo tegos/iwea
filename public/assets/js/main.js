@@ -118,24 +118,15 @@ $(window).load(function () {
     setActiveMenuItem();
 
     if (action == 'analytics') {
-        buildTableTemterature();
         buildTableDistance();
-        buildTableKoef();
-
-        var handler = onVisibilityChange($('#table-result-koef'), function (e) {
-            prepareProgressBar();
-        });
-
-        //$(window).on('DOMContentLoaded load resize scroll', handler);
-
         getGroup();
+    }
 
+    if (action == 'accuracy') {
         $('#analyze').click(function () {
             var days = $('#interval').val();
-            var site = $('#site-int').val();
-            buildTableAnalyze(days, site);
+            buildTableAnalyze(days);
         });
-
     }
 
     // close alert
