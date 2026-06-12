@@ -20,12 +20,25 @@ class FileCache
         if (!$files) {
             return false;
         }
-        $handle = fopen($files[0], 'r');
+
+        $file   = $files[0];
+        $expiry = (int) substr(strrchr($file, '.'), 1);
+        if ($expiry < time()) {
+            unlink($file);
+            return false;
+        }
+
+        $handle = fopen($file, 'r');
+        if ($handle === false) {
+            return false;
+        }
         flock($handle, LOCK_SH);
-        $data = fread($handle, filesize($files[0]));
+        $stat = fstat($handle);
+        $data = $stat['size'] > 0 ? fread($handle, $stat['size']) : '';
         flock($handle, LOCK_UN);
         fclose($handle);
-        return unserialize($data);
+
+        return $data !== '' ? json_decode($data, true) : false;
     }
 
     public function set(string $key, mixed $value): void
@@ -34,10 +47,14 @@ class FileCache
         if (!is_dir($this->dir)) {
             mkdir($this->dir, 0755, true);
         }
-        $file = $this->dir . 'cache.' . $this->sanitizeKey($key) . '.' . (time() + $this->ttl);
+
+        $file   = $this->dir . 'cache.' . $this->sanitizeKey($key) . '.' . (time() + $this->ttl);
         $handle = fopen($file, 'w');
+        if ($handle === false) {
+            throw new \RuntimeException("FileCache: cannot open {$file} for writing");
+        }
         flock($handle, LOCK_EX);
-        fwrite($handle, serialize($value));
+        fwrite($handle, (string) json_encode($value));
         fflush($handle);
         flock($handle, LOCK_UN);
         fclose($handle);
@@ -57,7 +74,7 @@ class FileCache
 
     private function sanitizeKey(string $key): string
     {
-        return preg_replace('/[^A-Z0-9._-]/i', '', $key);
+        return preg_replace('/[^A-Z0-9_-]/i', '', $key);
     }
 
     private function purgeExpired(): void
@@ -67,8 +84,8 @@ class FileCache
             return;
         }
         foreach ($files as $file) {
-            $time = (int) substr(strrchr($file, '.'), 1);
-            if ($time < time() && file_exists($file)) {
+            $expiry = (int) substr(strrchr($file, '.'), 1);
+            if ($expiry < time() && file_exists($file)) {
                 unlink($file);
             }
         }
