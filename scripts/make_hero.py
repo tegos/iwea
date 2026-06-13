@@ -1,6 +1,6 @@
 """Record a looping hero animation of iWea for the README.
 
-Visits Home → Compare → Analytics → Diff (2 sources selected) → Home.
+Visits Home → Compare → Diff (interactive checkboxes) → Home.
 Requires Docker running with real weather data.
 
 Usage:
@@ -9,7 +9,6 @@ Usage:
     python scripts/make_hero.py http://localhost:8080 assets/hero.webp
 """
 import sys
-import time
 import urllib.request
 from io import BytesIO
 from pathlib import Path
@@ -19,10 +18,9 @@ from playwright.sync_api import sync_playwright
 
 HIGHCHARTS_CDN = "https://cdn.jsdelivr.net/npm/highcharts@12/highcharts.js"
 
-W, H     = 1280, 720
-OUT_W    = 880
-FPS_MS   = 60
-HOLD_MS  = 800
+W, H   = 1280, 720
+OUT_W  = 720
+FPS_MS = 80
 
 CURSOR_SVG = (
     "data:image/svg+xml;utf8,"
@@ -35,13 +33,14 @@ CURSOR_SVG = (
 def install_cursor(page):
     page.evaluate(
         """(svg) => {
+            document.getElementById('__cur')?.remove();
             const c = document.createElement('img');
             c.id = '__cur';
             c.src = svg;
             Object.assign(c.style, {
                 position: 'fixed', left: '0px', top: '0px', width: '28px',
                 height: '28px', zIndex: 99999, pointerEvents: 'none',
-                filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.4))', transition: 'none',
+                filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.5))', transition: 'none',
             });
             document.body.appendChild(c);
         }""",
@@ -51,8 +50,8 @@ def install_cursor(page):
 
 class Recorder:
     def __init__(self, page):
-        self.page      = page
-        self.frames    = []
+        self.page = page
+        self.frames = []
         self.durations = []
         self.cx, self.cy = W / 2, H / 2
 
@@ -70,39 +69,70 @@ class Recorder:
         self.frames.append(Image.open(BytesIO(png)).convert("RGB"))
         self.durations.append(dur)
 
-    def hold(self, ms=HOLD_MS):
+    def hold(self, ms):
         if self.frames:
             self.durations[-1] += ms
-        else:
-            self.snap(ms)
 
-    def glide(self, x, y, steps=14, settle=12):
+    def glide(self, x, y, steps=16, settle=14):
         x0, y0 = self.cx, self.cy
         for i in range(1, steps + 1):
-            t    = i / steps
+            t = i / steps
             ease = t * t * (3 - 2 * t)
             self._place_cursor(x0 + (x - x0) * ease, y0 + (y - y0) * ease)
             self.page.wait_for_timeout(settle)
             self.snap()
 
-    def multi_snap(self, count, delay_ms=80):
-        """Capture count frames with delay — shows chart animation in motion."""
-        for _ in range(count):
-            self.snap(delay_ms)
-            self.page.wait_for_timeout(delay_ms)
+
+def scroll_to(page, selector):
+    page.evaluate(
+        "(sel) => { const e = document.querySelector(sel);"
+        "if (e) e.scrollIntoView({block:'center', behavior:'instant'}); }",
+        selector,
+    )
+    page.wait_for_timeout(80)
 
 
-def wait_chart(page, timeout=12000):
-    """Wait for Highcharts SVG root then let animation finish."""
+def scroll_top(page):
+    page.evaluate("window.scrollTo(0, 0)")
+    page.wait_for_timeout(80)
+
+
+def trace_chart(page, rec, container_id, steps=18, y_frac=0.45):
+    """Glide cursor L→R across a Highcharts chart to trigger crosshair + tooltip."""
+    scroll_to(page, f"#{container_id}")
+    page.wait_for_timeout(200)
+    bbox = page.locator(f"#{container_id}").bounding_box()
+    if not bbox:
+        return
+    # Target the plot area (avoid axes on edges)
+    x0 = bbox["x"] + bbox["width"] * 0.10
+    x1 = bbox["x"] + bbox["width"] * 0.88
+    y  = bbox["y"] + bbox["height"] * y_frac
+    rec.glide(x0, y, steps=5)          # approach from current position
+    rec.hold(200)
+    x_cur = x0
+    dx = (x1 - x0) / steps
+    for _ in range(steps):
+        x_cur += dx
+        rec._place_cursor(x_cur, y)
+        page.wait_for_timeout(22)
+        rec.snap()
+    rec.hold(500)
+    # Sweep back quickly
+    rec.glide(x0 + (x1 - x0) * 0.3, y, steps=7, settle=10)
+
+
+def wait_chart(page, timeout=14000):
     page.wait_for_selector(".highcharts-root", timeout=timeout)
-    page.wait_for_timeout(1000)
+    page.wait_for_timeout(1200)
 
 
-def goto(page, url, rec):
-    """Navigate, reinstall cursor, park it off-screen-ish."""
+def goto(page, url, rec, scroll_reset=True):
     page.goto(url)
+    if scroll_reset:
+        scroll_top(page)
     install_cursor(page)
-    rec._place_cursor(W - 60, H - 60)
+    rec._place_cursor(W * 0.75, H * 0.12)
 
 
 def record(base_url, out_path):
@@ -116,10 +146,8 @@ def record(base_url, out_path):
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page    = browser.new_page(
-            viewport={"width": W, "height": H},
-            device_scale_factor=1,
-        )
+        page = browser.new_page(viewport={"width": W, "height": H}, device_scale_factor=1)
+
         # Serve locally-cached Highcharts — code.highcharts.com blocked in WSL
         page.route(
             "**/code.highcharts.com/**",
@@ -131,82 +159,85 @@ def record(base_url, out_path):
         )
         rec = Recorder(page)
 
-        # ── Act 1: Home ────────────────────────────────────────────────────────
+        # ── Act 1: Home — forecast widget then chart hover ─────────────────────
         goto(page, base_url + "/", rec)
         wait_chart(page)
-        # Capture chart animation rendering in
-        rec.multi_snap(12, 80)
-        rec.snap(); rec.hold(2200)
+        # Show header + forecast widget
+        scroll_top(page)
+        rec.snap(); rec.hold(1000)
+        # Glide cursor over the 7-day forecast cards
+        card_y = page.evaluate(
+            "() => { const e = document.querySelector('.forecast-container');"
+            "return e ? e.getBoundingClientRect().top + 60 : 380; }"
+        )
+        rec.glide(W * 0.25, card_y, steps=8)
+        rec.hold(200)
+        rec.glide(W * 0.72, card_y, steps=12, settle=18)
+        rec.hold(300)
+        # Scroll to chart and hover for tooltip
+        trace_chart(page, rec, "container-chart-min")
+        rec.hold(1000)
 
-        # ── Act 2: Compare ─────────────────────────────────────────────────────
+        # ── Act 2: Compare — two charts, hover both ────────────────────────────
         goto(page, base_url + "/compare", rec)
         wait_chart(page)
-        # Wait for second chart (initChartMax called after initChartMin)
-        page.wait_for_timeout(600)
-        rec.multi_snap(10, 80)
-        rec.snap(); rec.hold(2200)
-
-        # ── Act 3: Analytics ───────────────────────────────────────────────────
-        goto(page, base_url + "/analytics", rec)
-        # Distance matrix populates via JS; charts may not render with empty data
-        page.wait_for_selector("#table-result-distance table", timeout=12000)
-        page.wait_for_timeout(800)
-        # Glide cursor over the distance matrix to give it life
+        page.wait_for_timeout(400)   # let initChartMax fire
+        scroll_to(page, "#container-chart-min")
         rec.snap(); rec.hold(600)
-        try:
-            mx, my = page.evaluate(
-                """() => { const e = document.querySelector('#table-result-distance');
-                    const b = e.getBoundingClientRect();
-                    return [b.x + b.width * 0.4, b.y + b.height * 0.5]; }"""
-            )
-            rec.glide(mx, my, steps=16)
-        except Exception:
-            pass
-        rec.snap(); rec.hold(2400)
+        trace_chart(page, rec, "container-chart-min", steps=18)
+        rec.hold(200)
+        trace_chart(page, rec, "container-chart-max", steps=16)
+        rec.hold(1000)
 
-        # ── Act 4: Diff ────────────────────────────────────────────────────────
+        # ── Act 3: Diff — click two checkboxes, watch chart animate in ─────────
         goto(page, base_url + "/diff", rec)
         wait_chart(page)
-        rec.snap(); rec.hold(600)
+        scroll_top(page)
+        rec.snap(); rec.hold(800)
 
-        # Click first two source labels to check checkboxes
         labels = page.locator("#source-list-sites label")
-        n_labels = labels.count()
-        if n_labels >= 2:
+        if labels.count() >= 2:
             lab0 = labels.nth(0)
             lab0.scroll_into_view_if_needed()
             b0 = lab0.bounding_box()
             if b0:
-                rec.glide(b0["x"] + b0["width"] / 2, b0["y"] + b0["height"] / 2, steps=12)
+                rec.glide(b0["x"] + b0["width"] / 2, b0["y"] + b0["height"] / 2, steps=10)
+            rec.hold(200)
             lab0.click()
-            page.wait_for_timeout(200)
-            rec.snap()
+            page.wait_for_timeout(120)
+            rec.snap(); rec.hold(250)
 
             lab1 = labels.nth(1)
             b1 = lab1.bounding_box()
             if b1:
-                rec.glide(b1["x"] + b1["width"] / 2, b1["y"] + b1["height"] / 2, steps=12)
+                rec.glide(b1["x"] + b1["width"] / 2, b1["y"] + b1["height"] / 2, steps=10)
+            rec.hold(150)
             lab1.click()
-            page.wait_for_timeout(600)
-            rec.multi_snap(8, 80)
-        rec.snap(); rec.hold(2000)
+            # Capture chart drawing animation
+            page.wait_for_timeout(180)
+            for _ in range(10):
+                rec.snap(65)
+                page.wait_for_timeout(65)
+            rec.hold(300)
+            # Hover over diff chart
+            trace_chart(page, rec, "container-chart-diff", steps=20)
+        rec.hold(1400)
 
-        # ── Close loop: back to Home ───────────────────────────────────────────
+        # ── Close loop: Home again ─────────────────────────────────────────────
         goto(page, base_url + "/", rec)
         wait_chart(page)
-        rec._place_cursor(W - 60, H - 60)
+        scroll_top(page)
         rec.snap(); rec.hold(600)
 
         browser.close()
 
-    # Downscale and write looping animated WebP
     scale  = OUT_W / W
     size   = (OUT_W, round(H * scale))
     frames = [f.resize(size, Image.LANCZOS) for f in rec.frames]
     frames[0].save(
         out_path,
         save_all=True, append_images=frames[1:],
-        duration=rec.durations, loop=0, quality=84, method=6,
+        duration=rec.durations, loop=0, quality=75, method=6,
     )
     kb      = out_path.stat().st_size / 1024
     total_s = sum(rec.durations) / 1000
