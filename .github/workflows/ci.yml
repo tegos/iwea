@@ -5,6 +5,9 @@ on:
     branches: [main, master]
   pull_request:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   unit:
     runs-on: ubuntu-latest
@@ -32,6 +35,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build app image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./docker/php
+          load: true
+          tags: iwea-app:latest
+          cache-from: type=gha,scope=app
+          cache-to: type=gha,scope=app,mode=max
+
+      - name: Build nginx image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./docker/nginx
+          load: true
+          tags: iwea-nginx:latest
+          cache-from: type=gha,scope=nginx
+          cache-to: type=gha,scope=nginx,mode=max
 
       - name: Prepare
         run: mkdir -p data/cache data/logs && chmod 777 data/cache data/logs && cp .env.ci .env

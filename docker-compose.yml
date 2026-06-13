@@ -1,6 +1,7 @@
 services:
   app:
     build: ./docker/php
+    image: iwea-app:latest
     volumes:
       - .:/var/www/html
     depends_on:
@@ -11,6 +12,7 @@ services:
 
   nginx:
     build: ./docker/nginx
+    image: iwea-nginx:latest
     ports:
       - "8080:80"
     volumes:
