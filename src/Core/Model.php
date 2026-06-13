@@ -285,13 +285,16 @@ class Model extends Helper
                 FROM weather
                 JOIN site ON weather.site_id = site.id
                 WHERE city_id = ?
-                AND DATE(date_write) = CURDATE()
+                AND DATE(date_write) = (
+                    SELECT DATE(MAX(w2.date_write)) FROM weather w2
+                    WHERE w2.city_id = ? AND w2.site_id = ?
+                )
                 AND site_id = ?
                 AND date BETWEEN ? AND ?
                 GROUP BY site_id, date
                 ORDER BY site_id, date";
 
-        $data     = $this->query($sql, [$cityId, $siteId, $startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
+        $data     = $this->query($sql, [$cityId, $cityId, $siteId, $siteId, $startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
         $cityName = $this->getCityName($cityId);
         $sites    = $this->getSites();
 

@@ -18,7 +18,7 @@
                         type: 'spline'
                     },
                     title: {
-                        text: '<?=$city_name?>, різниця температур'
+                        text: <?= json_encode($city_name . ', різниця температур') ?>,
                     },
 
                     xAxis: {
@@ -63,7 +63,7 @@
                         type: 'line'
                     },
                     title: {
-                        text: '<?=$city_name?>, різниця макс. температур'
+                        text: <?= json_encode($city_name . ', різниця макс. температур') ?>,
                     },
 
                     xAxis: {

@@ -21,7 +21,7 @@
                         type: 'spline'
                     },
                     title: {
-                        text: '<?=$city_name?>, температура (мін.) на 7 днів'
+                        text: <?= json_encode($city_name . ', температура (мін.) на 7 днів') ?>,
                     },
 
                     xAxis: {
@@ -67,7 +67,7 @@
                         type: 'spline'
                     },
                     title: {
-                        text: '<?=$city_name?>, температура (макс.) на 7 днів'
+                        text: <?= json_encode($city_name . ', температура (макс.) на 7 днів') ?>,
                     },
 
                     xAxis: {

@@ -15,7 +15,7 @@
                         type: 'spline'
                     },
                     title: {
-                        text: '<?=$city_name?>, погода на 7 днів'
+                        text: <?= json_encode($city_name . ', погода на 7 днів') ?>,
                     },
 
                     xAxis: {

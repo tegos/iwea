@@ -13,5 +13,13 @@
     "psr-4": {
       "Iwea\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Iwea\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11"
   }
 }

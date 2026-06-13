@@ -35,7 +35,8 @@
                     </div>
                 </div> <!-- .forecast-header -->
                 <div class="forecast-content">
-                    <div class="location"><?=$city_name?></div>
+                    <div class="location"><?= htmlspecialchars($city_name) ?></div>
+                    <?php if (!empty($forecasts)): ?>
                     <div class="degree">
                         <table>
                             <tr>
@@ -59,9 +60,8 @@
                                 </td>
                             </tr>
                         </table>
-
-
                     </div>
+                    <?php endif; ?>
 
                 </div>
             </div>

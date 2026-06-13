@@ -42,7 +42,7 @@
     function initChartGroups() {
         Highcharts.chart('container-chart-group-1', {
             chart: { type: 'spline' },
-            title: { text: '<?= $city_name ?>, t° max, Група 1' },
+            title: { text: <?= json_encode($city_name . ', t° max, Група 1') ?> },
             xAxis: { categories: cats },
             yAxis: {
                 title: { text: 'Температура, °C' },
@@ -55,7 +55,7 @@
 
         Highcharts.chart('container-chart-group-2', {
             chart: { type: 'spline' },
-            title: { text: '<?= $city_name ?>, t° max, Група 2' },
+            title: { text: <?= json_encode($city_name . ', t° max, Група 2') ?> },
             xAxis: { categories: cats },
             yAxis: {
                 title: { text: 'Температура, °C' },
