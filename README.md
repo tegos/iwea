@@ -2,6 +2,8 @@
 
 iWea is a web weather aggregator that compares forecasts from multiple sources on interactive Highcharts graphs.
 
+![iWea demo](assets/hero.webp)
+
 ---
 
 ## Weather Sources
