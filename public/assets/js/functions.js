@@ -220,7 +220,10 @@ function getGroup() {
     while (groupOne.length < Math.ceil(n / 2)) {
         var last_path = groupOne.last();
         var m = minimum(matrix[last_path], groupOne);
-        groupOne.push(matrix[last_path].indexOf(m));
+        if (!isFinite(m)) break;
+        var idx = matrix[last_path].indexOf(m);
+        if (idx === -1 || groupOne.indexOf(idx) !== -1) break;
+        groupOne.push(idx);
     }
 
     for (var i = 0; i < n; i++) {
