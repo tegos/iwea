@@ -10,11 +10,14 @@ Usage:
 """
 import sys
 import time
+import urllib.request
 from io import BytesIO
 from pathlib import Path
 
 from PIL import Image
 from playwright.sync_api import sync_playwright
+
+HIGHCHARTS_CDN = "https://cdn.jsdelivr.net/npm/highcharts@12/highcharts.js"
 
 W, H     = 1280, 720
 OUT_W    = 880
@@ -106,11 +109,25 @@ def record(base_url, out_path):
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
+    print("Fetching Highcharts …")
+    with urllib.request.urlopen(HIGHCHARTS_CDN, timeout=30) as resp:
+        hc_js = resp.read()
+    print(f"Highcharts fetched ({len(hc_js)//1024} KB)")
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page    = browser.new_page(
             viewport={"width": W, "height": H},
             device_scale_factor=1,
+        )
+        # Serve locally-cached Highcharts — code.highcharts.com blocked in WSL
+        page.route(
+            "**/code.highcharts.com/**",
+            lambda route: route.fulfill(
+                status=200,
+                content_type="application/javascript; charset=utf-8",
+                body=hc_js,
+            ),
         )
         rec = Recorder(page)
 
@@ -131,9 +148,8 @@ def record(base_url, out_path):
 
         # ── Act 3: Analytics ───────────────────────────────────────────────────
         goto(page, base_url + "/analytics", rec)
-        # Distance matrix + group charts populate via JS on load
+        # Distance matrix populates via JS; charts may not render with empty data
         page.wait_for_selector("#table-result-distance table", timeout=12000)
-        page.wait_for_selector(".highcharts-root", timeout=8000)
         page.wait_for_timeout(800)
         # Glide cursor over the distance matrix to give it life
         rec.snap(); rec.hold(600)
@@ -153,26 +169,24 @@ def record(base_url, out_path):
         wait_chart(page)
         rec.snap(); rec.hold(600)
 
-        # Click first two source checkboxes to show a diff
-        checkboxes = page.query_selector_all("#source-list-sites input[type='checkbox']")
-        if len(checkboxes) >= 2:
-            cx0, cy0 = page.evaluate(
-                """() => { const e=document.querySelector('#source-list-sites input');
-                    const b=e.getBoundingClientRect();
-                    return [b.x+b.width/2, b.y+b.height/2]; }"""
-            )
-            rec.glide(cx0, cy0, steps=12)
-            checkboxes[0].click()
+        # Click first two source labels to check checkboxes
+        labels = page.locator("#source-list-sites label")
+        n_labels = labels.count()
+        if n_labels >= 2:
+            lab0 = labels.nth(0)
+            lab0.scroll_into_view_if_needed()
+            b0 = lab0.bounding_box()
+            if b0:
+                rec.glide(b0["x"] + b0["width"] / 2, b0["y"] + b0["height"] / 2, steps=12)
+            lab0.click()
             page.wait_for_timeout(200)
             rec.snap()
 
-            cx1, cy1 = page.evaluate(
-                """() => { const items=document.querySelectorAll('#source-list-sites input');
-                    const b=items[1].getBoundingClientRect();
-                    return [b.x+b.width/2, b.y+b.height/2]; }"""
-            )
-            rec.glide(cx1, cy1, steps=12)
-            checkboxes[1].click()
+            lab1 = labels.nth(1)
+            b1 = lab1.bounding_box()
+            if b1:
+                rec.glide(b1["x"] + b1["width"] / 2, b1["y"] + b1["height"] / 2, steps=12)
+            lab1.click()
             page.wait_for_timeout(600)
             rec.multi_snap(8, 80)
         rec.snap(); rec.hold(2000)
