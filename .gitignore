@@ -1,28 +1,13 @@
-# IDE
 .idea/
-
-# Dependencies
 /vendor/
-
-# Environment (credentials — never commit)
 .env
-
-# Runtime data
 data/cache/
 data/logs/
 data/state
 data/sync.log
-
-# OS
 .DS_Store
 Thumbs.db
-
-# Generated assets (hero animation — commit manually when ready)
 assets/*.webp
 assets/*.gif
-
-# PHPUnit cache
 .phpunit.result.cache
-
-# Local dev docs
 docs/superpowers/
