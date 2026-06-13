@@ -4,7 +4,7 @@ namespace Iwea\Weather;
 
 use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
-use Iwea\Core\Model;
+use Iwea\Core\{Model, Locale};
 
 class Interia implements ISiteHelper
 {
@@ -65,7 +65,7 @@ class Interia implements ISiteHelper
                 $date = trim($dateNode->text());   // e.g. "14.06"
                 $day  = trim($dayNode->text());    // e.g. "Wtorek"
 
-                $dateW = $this->getIndexOfPolishDay($day);
+                $dateW = Locale::indexOfPolishDay($day);
 
                 $date .= '.' . date('Y');
 
@@ -105,41 +105,4 @@ class Interia implements ISiteHelper
         }
     }
 
-    // ---------------------------------------------------------------------------
-    // Helpers (inlined from the legacy Helper base class)
-    // ---------------------------------------------------------------------------
-
-    /**
-     * Returns the Polish full-name day array, indexed 0 (Sunday) … 6 (Saturday),
-     * matching PHP's date('w') convention.
-     *
-     * @return string[]
-     */
-    private function getPolishDays(): array
-    {
-        return [
-            'Niedziela',
-            'Poniedziałek',
-            'Wtorek',
-            'Środa',
-            'Czwartek',
-            'Piątek',
-            'Sobota',
-        ];
-    }
-
-    /**
-     * Returns the 0-based day-of-week index for a given Polish day name,
-     * or -1 if not found.
-     */
-    private function getIndexOfPolishDay(string $day): int
-    {
-        $days = $this->getPolishDays();
-        foreach ($days as $i => $name) {
-            if (strcasecmp($name, $day) === 0) {
-                return $i;
-            }
-        }
-        return -1;
-    }
 }

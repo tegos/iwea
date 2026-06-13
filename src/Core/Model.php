@@ -5,7 +5,7 @@ namespace Iwea\Core;
 use Iwea\Cache\FileCache;
 use Iwea\Database\Database;
 
-class Model extends Helper
+class Model
 {
     private Database $db;
     private FileCache $cache;
@@ -177,13 +177,17 @@ class Model extends Helper
                 'max'   => round((float)$value['max'], 2),
             ];
         }
-        return $this->group_assoc($rez, 'name');
+        $grouped = [];
+        foreach ($rez as $v) {
+            $grouped[$v['name']][] = $v;
+        }
+        return $grouped;
     }
 
     public function getWeatherAll(string|int $date): array
     {
         $cityId    = $this->getCookieCityId();
-        $startDate = $date ? new \DateTime((string)$date) : $this->getToday();
+        $startDate = $date ? new \DateTime((string)$date) : Locale::today();
         $endDate   = (clone $startDate)->modify('+6 day');
 
         $sql = "SELECT site_id, site.name, city_id, date,
@@ -234,7 +238,7 @@ class Model extends Helper
                 }
             }
             $forecasts[] = [
-                'day'      => $this->getDayUkr((int)$d->format('w')),
+                'day'      => Locale::day((int)$d->format('w')),
                 'day_date' => $dm,
                 'min'      => $k ? round($min / $k) : 0,
                 'max'      => $k ? round($max / $k) : 0,
@@ -277,7 +281,7 @@ class Model extends Helper
     {
         $cityId    = $this->getCookieCityId();
         $siteId    = $this->getCookieSiteId();
-        $startDate = $this->getToday();
+        $startDate = Locale::today();
         $endDate   = (clone $startDate)->modify('+6 day');
 
         $sql = "SELECT site_id, site.name, city_id, date,
@@ -326,7 +330,7 @@ class Model extends Helper
         foreach ($categories as $i => $category) {
             $d = \DateTime::createFromFormat('d.m.Y', $category);
             $forecasts[] = [
-                'day'      => $this->getDayUkr((int)$d->format('w')),
+                'day'      => Locale::day((int)$d->format('w')),
                 'day_date' => $d->format('d.m'),
                 'min'      => $series[0]['data'][$i] ?? 0,
                 'max'      => $series[1]['data'][$i] ?? 0,

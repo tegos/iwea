@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  unit:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,5 +24,59 @@ jobs:
       - name: Lint PHP files
         run: find src -name '*.php' | xargs -P4 php -l | grep -v "No syntax errors" || true
 
-      - name: Run tests
-        run: vendor/bin/phpunit --testdox
+      - name: Run unit tests
+        run: vendor/bin/phpunit --testsuite Unit --testdox
+
+  feature:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare runtime directories and .env
+        run: |
+          mkdir -p data/cache data/logs
+          chmod 777 data/cache data/logs
+          printf '%s\n' \
+            'DB_HOST=db' \
+            'DB_NAME=iwea' \
+            'DB_USER=iwea' \
+            'DB_PASS=iwea' \
+            'APP_TIMEZONE=Europe/Kyiv' \
+            'APP_DEFAULT_CITY=1' \
+            'APP_DEFAULT_SITE=1' \
+            'APP_DOMAIN=http://localhost:8080' \
+            'APP_START_DATE=2016-05-12' \
+            > .env
+
+      - name: Start services
+        run: docker compose up -d
+
+      - name: Wait for nginx
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/ -o /dev/null; then
+              echo "Server ready after ${i}s"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Server did not start in time" && docker compose logs && exit 1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run feature tests
+        env:
+          APP_URL: http://localhost:8080
+        run: vendor/bin/phpunit --testsuite Feature --testdox
+
+      - name: Docker logs on failure
+        if: failure()
+        run: docker compose logs

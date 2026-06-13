@@ -1,7 +1,7 @@
 <?php
 
 use Dotenv\Dotenv;
-use Iwea\Core\{Model, Helper};
+use Iwea\Core\{Model, SyncState};
 use Iwea\Logger\Logger;
 use Iwea\Weather\{
     OpenWeatherMap,
@@ -27,7 +27,6 @@ $logger->i($tag, '---------------------');
 $logger->i($tag, 'Cron start');
 
 $model  = new Model();
-$helper = new Helper();
 
 $sourceMap = [
     'OpenWeatherMap'   => OpenWeatherMap::class,
@@ -39,7 +38,7 @@ $sourceMap = [
     'Interia'          => Interia::class,
 ];
 
-$helper->setStateRun('run');
+SyncState::setRunState('run');
 try {
     $cities = $model->getCities();
     $sites  = $model->getSites();
@@ -64,7 +63,7 @@ try {
 } catch (\Throwable $e) {
     $logger->e($tag, $e->getMessage());
 } finally {
-    $helper->setStateRun('');
+    SyncState::setRunState('');
 }
 
 $logger->i($tag, 'Час виконання: ' . round(microtime(true) - $start, 4) . ' с.');

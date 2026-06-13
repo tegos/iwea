@@ -2,7 +2,7 @@
 
 namespace Iwea\Core;
 
-class Controller extends Helper
+class Controller
 {
     private string $method;
     private mixed $arg;

@@ -2,7 +2,7 @@
 
 namespace Iwea\Core;
 
-class Action extends Helper
+class Action
 {
     private Model $model;
     private mixed $arg;
@@ -32,15 +32,15 @@ class Action extends Helper
     public function home(Template &$view): void
     {
         $weather      = $this->model->getWeather();
-        $dateNow      = $this->getToday();
+        $dateNow      = Locale::today();
         $view->is_home     = true;
         $view->categories  = json_encode($weather['categories']);
         $view->series      = json_encode($weather['series']);
         $view->city_name   = $weather['city_name'];
         $view->title       = 'iWEA — Порівняння прогнозу погоди';
-        $view->day_now     = $this->getDayUkr((int)$dateNow->format('w'));
+        $view->day_now     = Locale::day((int)$dateNow->format('w'));
         $view->forecasts   = $weather['forecasts'];
-        $view->now_month   = $this->getMonthUkr($dateNow->format('M'));
+        $view->now_month   = Locale::month($dateNow->format('M'));
         $view->now_month_d = $dateNow->format('d');
         $view->site_id     = $this->model->getCookieSiteId();
         $view->sites       = $this->model->getSites();
@@ -76,7 +76,7 @@ class Action extends Helper
         $pages  = ['', 'sources', 'compare', 'analytics', 'accuracy', 'diff', 'search'];
         $start  = new \DateTime(Config::get('APP_START_DATE') ?? '2016-05-12');
         $end    = new \DateTime();
-        $days   = $this->dateTimesToDays($start, $end);
+        $days   = Locale::daysDiff($start, $end);
 
         $output  = '<?xml version="1.0" encoding="UTF-8"?>';
         $output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -85,7 +85,7 @@ class Action extends Helper
         }
         $dateStart = (new \DateTime())->modify("-{$days} days");
         for ($i = 0; $i < $days; $i++) {
-            $param   = $this->base64_url_encode(http_build_query(['d' => $dateStart->format('d-m-Y')]));
+            $param   = strtr(base64_encode(http_build_query(['d' => $dateStart->format('d-m-Y')])), '+/=', '-_~');
             $output .= "<url><loc>{$domain}/compare/{$param}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>";
             $dateStart->modify('+1 day');
         }
@@ -119,14 +119,14 @@ class Action extends Helper
     {
         error_reporting(0);
         $startDate = new \DateTime(Config::get('APP_START_DATE') ?? '2016-05-12');
-        $dateNow   = $this->getToday();
+        $dateNow   = Locale::today();
         $today     = true;
         $paramD    = '';
 
         if (!empty($this->arg)) {
             try {
                 $paramD = '/' . $this->arg;
-                $getStr = $this->base64_url_decode($this->arg);
+                $getStr = base64_decode(strtr($this->arg, '-_~', '+/='));
                 parse_str($getStr, $getArray);
                 if (!empty($getArray['d'])) {
                     $dateNow = new \DateTime($getArray['d']);
@@ -145,29 +145,29 @@ class Action extends Helper
         $view->series      = json_encode($weather['series']);
         $view->series_max  = json_encode($weather['series_max']);
         $view->city_name   = $weather['city_name'];
-        $view->title       = $today ? 'Погода сьогодні' : $this->getTitlePage($dateNow);
-        $view->day_now     = $this->getDayUkr((int)$dateNow->format('w'));
+        $view->title       = $today ? 'Погода сьогодні' : Locale::pageTitle($dateNow);
+        $view->day_now     = Locale::day((int)$dateNow->format('w'));
         $view->forecasts   = $weather['forecasts'];
-        $view->now_month   = $this->getMonthUkr($dateNow->format('M'));
+        $view->now_month   = Locale::month($dateNow->format('M'));
         $view->now_month_d = $dateNow->format('d');
         $view->page_title  = $view->title;
         $view->is_today    = $today;
         $view->site_id     = $this->model->getCookieSiteId();
 
-        $todayStr = $this->getToday()->format('Y-m-d');
+        $todayStr = Locale::today()->format('Y-m-d');
         if ($dateFormat !== $todayStr) {
             $prev = (clone $dateNow)->modify('-1 day');
             $next = (clone $dateNow)->modify('+1 day');
             if ($startDate < $prev) {
-                $view->url_prev   = '/compare/' . $this->base64_url_encode(http_build_query(['d' => $prev->format('d-m-Y')]));
-                $view->title_prev = $this->getTitlePage($prev);
+                $view->url_prev   = '/compare/' . strtr(base64_encode(http_build_query(['d' => $prev->format('d-m-Y')])), '+/=', '-_~');
+                $view->title_prev = Locale::pageTitle($prev);
             }
-            $view->url_next   = '/compare/' . $this->base64_url_encode(http_build_query(['d' => $next->format('d-m-Y')]));
-            $view->title_next = $this->getTitlePage($next);
+            $view->url_next   = '/compare/' . strtr(base64_encode(http_build_query(['d' => $next->format('d-m-Y')])), '+/=', '-_~');
+            $view->title_next = Locale::pageTitle($next);
         } else {
             $prev = (clone $dateNow)->modify('-1 day');
-            $view->url_prev   = '/compare/' . $this->base64_url_encode(http_build_query(['d' => $prev->format('d-m-Y')]));
-            $view->title_prev = $this->getTitlePage($prev);
+            $view->url_prev   = '/compare/' . strtr(base64_encode(http_build_query(['d' => $prev->format('d-m-Y')])), '+/=', '-_~');
+            $view->title_prev = Locale::pageTitle($prev);
         }
 
         $view->chart = $view->render('chart-compare');
