@@ -33,35 +33,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Prepare runtime directories and .env
-        run: |
-          mkdir -p data/cache data/logs
-          chmod 777 data/cache data/logs
-          printf '%s\n' \
-            'DB_HOST=db' \
-            'DB_NAME=iwea' \
-            'DB_USER=iwea' \
-            'DB_PASS=iwea' \
-            'APP_TIMEZONE=Europe/Kyiv' \
-            'APP_DEFAULT_CITY=1' \
-            'APP_DEFAULT_SITE=1' \
-            'APP_DOMAIN=http://localhost:8080' \
-            'APP_START_DATE=2016-05-12' \
-            > .env
+      - name: Prepare
+        run: mkdir -p data/cache data/logs && chmod 777 data/cache data/logs && cp .env.ci .env
 
       - name: Start services
-        run: docker compose up -d
-
-      - name: Wait for nginx
-        run: |
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:8080/ -o /dev/null; then
-              echo "Server ready after ${i}s"
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "Server did not start in time" && docker compose logs && exit 1
+        run: docker compose up -d --wait
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
