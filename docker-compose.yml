@@ -10,7 +10,7 @@ services:
       - PHP_FPM_PM=dynamic
 
   nginx:
-    image: nginx:alpine
+    build: ./docker/nginx
     ports:
       - "8080:80"
     volumes:
@@ -20,7 +20,7 @@ services:
     depends_on:
       - app
     healthcheck:
-      test: ["CMD-SHELL", "nc -w1 localhost 80 </dev/null"]
+      test: ["CMD-SHELL", "curl -so /dev/null http://localhost/"]
       interval: 5s
       timeout: 3s
       retries: 15
