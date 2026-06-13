@@ -21,5 +21,8 @@ Thumbs.db
 assets/*.webp
 assets/*.gif
 
+# PHPUnit cache
+.phpunit.result.cache
+
 # Local dev docs
 docs/superpowers/
