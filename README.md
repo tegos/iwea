@@ -108,6 +108,17 @@ Originally built as a university diploma project in 2016. Modernized in 2026: PS
 
 ---
 
+## Publications & Academic References
+
+Backed by official academic research published in the proceedings of the **IV International Scientific and Practical Conference "Computational Intelligence" (ComInt 2017)** hosted by Taras Shevchenko National University of Kyiv.
+
+**Citation:**
+> Melnyk, R. A., & Mykhavko, I. V. (2017). *Analysis and classification of weather forecast data*. In V. Ye. Snytyuk (Ed.), Proceedings of the IV International Scientific and Practical Conference "Computational Intelligence (Results, Problems and Perspectives)" (p. 266). Kyiv: VPC "Kyivskyi Universytet".
+
+- **Conference Proceedings:** Publication index on page 12, article on page 266 of the official [Conference Proceedings PDF](https://kiis.knu.ua/wp-content/uploads/2017/12/4_COMMIT.pdf).
+
+---
+
 ## License
 
 MIT
