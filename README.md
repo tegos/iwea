@@ -106,6 +106,8 @@ Fetches fresh forecasts from all active sources and stores them in the database.
 
 Originally built as a university diploma project in 2016. Modernized in 2026: PSR-4 namespaces, PDO prepared statements, Guzzle HTTP client, Docker Compose, bcrypt passwords, PHP sessions.
 
+The 2016 original is documented in [`docs/2016-original/`](docs/2016-original/README.md): the class diagram of the pre-refactor architecture, full-page captures of the live site at `iwea.ml`, and the comparison charts and clustering behind the paper below.
+
 ---
 
 ## Publications & Academic References
